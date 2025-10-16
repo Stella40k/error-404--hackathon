@@ -4,25 +4,21 @@ import bcrypt from "bcryptjs";
 
 export const login = async (req, res) => {
   const { username, password } = req.body;
-
   try {
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(401).json({ message: "Credenciales inválidas" });
     }
-
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Credenciales inválidas" });
     }
-
     const token = generateToken({
       id: user._id,
-      name: user.person?.name,
-      lastname: user.person?.lastname,
+      name: user.name, // Ya no está dentro de person
+      lastname: user.lastname, // Ya no está dentro de person
       username: user.username,
     });
-
     return res.json({ message: "Login exitoso", token });
   } catch (error) {
     return res
@@ -34,24 +30,20 @@ export const login = async (req, res) => {
 export const register = async (req, res) => {
   try {
     const { name, lastname, username, email, password } = req.body;
-
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
       return res.status(400).json({ message: "El email o username ya existe" });
     }
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-
     const newUser = new User({
-      person: { name, lastname },
+      name, // Directamente en el modelo
+      lastname, // Directamente en el modelo
       username,
       email,
       password: hashedPassword,
     });
-
     await newUser.save();
-
     return res.status(201).json({ message: "Usuario registrado exitosamente" });
   } catch (error) {
     return res
@@ -82,17 +74,14 @@ export const updateProfile = async (req, res) => {
   try {
     const { name, lastname, username, bio } = req.body;
     const userId = req.user.id;
-
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { name, lastname, username, bio },
-      { new: true } // Devuelve el documento actualizado
+      { new: true }
     ).select("-password");
-
     if (!updatedUser) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
-
     res.status(200).json({
       message: "Perfil actualizado exitosamente",
       user: updatedUser,
@@ -103,6 +92,47 @@ export const updateProfile = async (req, res) => {
         .status(400)
         .json({ message: "El nombre de usuario ya está en uso." });
     }
+    res
+      .status(500)
+      .json({ message: "Error en el servidor", error: error.message });
+  }
+};
+
+export const updateAccountCredentials = async (req, res) => {
+  const { currentPassword, newPassword, confirmPassword, email } = req.body;
+  const userId = req.user.id;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res
+        .status(401)
+        .json({ message: "La contraseña actual es incorrecta." });
+    }
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser && existingUser._id.toString() !== userId) {
+        return res
+          .status(400)
+          .json({ message: "El correo electrónico ya está en uso." });
+      }
+      user.email = email;
+    }
+    if (newPassword) {
+      if (newPassword !== confirmPassword) {
+        return res
+          .status(400)
+          .json({ message: "Las nuevas contraseñas no coinciden." });
+      }
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(newPassword, salt);
+    }
+    await user.save();
+    res.status(200).json({ message: "Cuenta actualizada exitosamente." });
+  } catch (error) {
     res
       .status(500)
       .json({ message: "Error en el servidor", error: error.message });
