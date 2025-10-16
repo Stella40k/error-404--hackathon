@@ -1,0 +1,72 @@
+/Visor-Civico-Formosa/
+├── server/                 <-- BACKEND: Tu área de trabajo principal (Node/Express/MongoDB)
+│   ├── src/
+│   │   ├── config/
+│   │   │   └── db.js         # Conexión a MongoDB (Mongoose)
+│   │   ├── models/
+│   │   │   ├── Reporte.js    # Schema para Reportes (el mapa)
+│   │   │   └── User.js       # Schema para Usuarios (login opcional, municipal)
+│   │   ├── controllers/
+│   │   │   ├── authController.js   # Lógica para Registro/Login
+│   │   │   ├── reporteController.js# Lógica CRUD, Filtrado y Zonas Calientes
+│   │   │   └── dashboardController.js # Lógica de Estadísticas y Exportación
+│   │   ├── routes/
+│   │   │   ├── authRoutes.js     # Rutas /api/auth/login, /api/auth/register
+│   │   │   ├── reporteRoutes.js  # Rutas /api/reports, /api/reports/:id
+│   │   │   └── dashboardRoutes.js# Rutas /api/dashboard/stats, /api/dashboard/export
+│   │   ├── middleware/
+│   │   │   └── authMiddleware.js # Verificación de JWT/Token (para el Dashboard)
+│   │   ├── utils/
+│   │   │   └── dataExporter.js   # Función para generar CSV/JSON
+│   │   └── app.js          # Configuración principal de Express
+│   ├── .env                # Variables de entorno (MONGO_URI, PORT)
+│   └── package.json        # Dependencias de Backend (express, mongoose, etc.)
+│
+├── public/                 <-- FRONTEND: Área de trabajo de tu compañera (HTML/JS/CSS/Leaflet)
+│   ├── index.html          # Página principal: Mapa + Formulario de Reporte
+│   ├── dashboard.html      # Panel de control para el municipio/autoridades
+│   ├── login.html          # Página de login/registro (para autenticación opcional)
+│   ├── css/
+│   │   └── style.css       # Estilos personalizados (además de Bootstrap)
+│   ├── js/
+│   │   ├── map.js          # Lógica de Leaflet: Inicialización, Markers, Filtros, Hot Zones
+│   │   ├── report.js       # Lógica del formulario: POST del reporte anónimo
+│   │   ├── dashboard.js    # Lógica del dashboard: Gráficos (Chart.js) y Exportación
+│   │   └── auth.js         # Manejo de la sesión, tokens, redirección
+│   ├── lib/                # Bibliotecas externas (Bootstrap, Leaflet, Chart.js)
+│   └── assets/             # Iconos de markers personalizados (ej. para Iluminación/Tránsito)
+│
+└── .gitignore
+
+
+
+
+/Visor-Civico-Formosa/
+├── server/                 <-- BACKEND: Tu área de trabajo (Node.js con Módulos ES)
+│   ├── src/
+│   │   ├── config/
+│   │   │   └── db.js         # Conexión a MongoDB (usando 'import/export' y Mongoose)
+│   │   ├── models/
+│   │   │   └── Reporte.js    # Schema Mongoose para el reporte geolocalizado
+│   │   ├── controllers/
+│   │   │   └── reporteController.js# Lógica: Obtener y Filtrar reportes de la DB
+│   │   ├── routes/
+│   │   │   └── reporteRoutes.js  # Ruta: GET /api/reports (punto de entrada del Front)
+│   │   └── app.js          # Configuración de Express (CORS, JSON, montar rutas)
+│   ├── package.json        # Configurado con "type": "module"
+│   └── server.js           # Inicio del servidor y conexión a db.js
+│
+├── public/                 <-- FRONTEND: El área del mapa (JS con Módulos ES, Leaflet)
+│   ├── index.html          # Contiene el div del mapa y los elementos de filtro/leyenda (Bootstrap)
+│   ├── css/
+│   │   ├── style.css       # Estilos básicos + estilos de Leaflet
+│   │   └── leaflet.css     # (Archivo CSS de la librería Leaflet)
+│   ├── js/
+│   │   ├── map.js          # 🗺️ Lógica de Leaflet: Inicializar mapa, dibujar markers, cambiar estilos
+│   │   └── main.js         # 🔗 Lógica de Interfaz: Capturar filtros del HTML y llamar a map.js
+│   ├── lib/                # Aquí van los archivos JS de librerías externas (ej. leaflet.js, bootstrap.js)
+│   └── assets/             # Íconos personalizados si se usan en lugar de los markers por defecto
+│
+└── package.json            # (Opcional, si el Front también necesita dependencias de NPM, pero no es crítico ahora)
+└── .gitignore
+
