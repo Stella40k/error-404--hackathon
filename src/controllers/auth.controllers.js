@@ -18,8 +18,8 @@ export const login = async (req, res) => {
 
     const token = generateToken({
       id: user._id,
-      name: user.name,
-      lastname: user.lastname,
+      name: user.person?.name,
+      lastname: user.person?.lastname,
       username: user.username,
     });
 
@@ -44,8 +44,7 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new User({
-      name,
-      lastname,
+      person: { name, lastname },
       username,
       email,
       password: hashedPassword,
