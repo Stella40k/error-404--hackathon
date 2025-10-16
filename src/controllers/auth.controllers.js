@@ -138,3 +138,37 @@ export const updateAccountCredentials = async (req, res) => {
       .json({ message: "Error en el servidor", error: error.message });
   }
 };
+export const deleteAccount = async (req, res) => {
+  const { password } = req.body;
+  const userId = req.user.id;
+
+  try {
+    if (!password) {
+      return res
+        .status(400)
+        .json({
+          message: "Se requiere la contraseña para eliminar la cuenta.",
+        });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado." });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "La contraseña es incorrecta." });
+    }
+
+    await User.findByIdAndDelete(userId);
+
+    res
+      .status(200)
+      .json({ message: "Tu cuenta ha sido eliminada exitosamente." });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error en el servidor", error: error.message });
+  }
+};
