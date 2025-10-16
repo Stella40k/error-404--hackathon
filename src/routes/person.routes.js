@@ -11,14 +11,12 @@ import {
 } from "../middlewares/validations/person.validations.js";
 import { validator } from "../middlewares/validator.middleware.js";
 
-export const personRoutes = Router();
+const router = Router();
 
-personRoutes.get("/people", getAllPeople);
-personRoutes.post("/people", createPersonValidation, validator, createPerson);
-personRoutes.put(
-  "/people/:id",
-  updatePersonValidation,
-  validator,
-  updatePerson
-);
-personRoutes.delete("/people/:id", deletePerson);
+router.get("/people", getAllPeople);
+router.post("/people", createPersonValidation, validator, createPerson);
+router.put("/people/:id", updatePersonValidation, validator, updatePerson);
+router.delete("/people/:id", deletePerson);
+
+// Exportamos el router de una forma más estándar
+export default router;

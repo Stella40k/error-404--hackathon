@@ -5,36 +5,42 @@ import "dotenv/config";
 import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Importa la conexión a la DB
 import { connectDB } from "./src/config/database.js";
+
+// Importa ÚNICAMENTE las rutas de MongoDB que están en uso
 import authRoutes from "./src/routes/auth.routes.js";
 import taskRoutes from "./src/routes/task.routes.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// Middlewares
 app.use(express.json());
-
-// --- INICIO DEL CAMBIO ---
-// Le decimos a CORS que permita peticiones desde dos orígenes:
-// el que tenías antes (5500) y el que usa Live Server (5501).
-const allowedOrigins = ["http://localhost:5500", "http://127.0.0.1:5501"];
-
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  })
-);
-// --- FIN DEL CAMBIO ---
-
+app.use(cors());
 app.use(morgan("dev"));
 app.use(cookieParser());
 
-// Rutas
+// Servir archivos estáticos del frontend
+app.use(express.static(path.join(__dirname, "frontend")));
+
+// Rutas de la API
 app.use("/api", authRoutes);
 app.use("/api", taskRoutes);
 
+// Ruta "Catch-All" para el Frontend
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "index.html"));
+});
+
+// Iniciar el servidor
 app.listen(PORT, async () => {
   await connectDB();
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
+  console.log(`✅ Servidor unificado corriendo en http://localhost:${PORT}`);
 });
