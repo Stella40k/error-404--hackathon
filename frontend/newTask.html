@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="assets/js/privateRoutes.js"></script>
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <title>HTML - Login</title>
+</head>
+
+<body>
+  <main class="h-screen bg-slate-900">
+    <nav class="bg-slate-950 flex justify-between p-4">
+      <div>
+        <a href="home.html" class="text-2xl font-bold text-white">
+          TasksApp
+        </a>
+        <a href="home.html" class="text-md text-white">
+          All Tasks
+        </a>
+        <a href="mytasks.html" class="text-md text-white">
+          My Tasks
+        </a>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <div class="flex justify-center items-center text-white gap-2">
+          <div class="border rounded-full h-8 w-8 flex justify-center items-center">
+            <i class="ph ph-user text-xl"></i>
+          </div>
+          <span id="user-profile"></span>
+        </div>
+        <div id="logout"
+          class="flex justify-center items-center gap-1 cursor-pointer p-2 hover:bg-red-600 rounded-md transition-all duration-200">
+          <i class="ph ph-sign-out text-xl text-white"></i>
+        </div>
+      </div>
+    </nav>
+
+    <div class="flex justify-center items-center">
+      <form onsubmit="createTask(event)" class="bg-white rounded-lg p-10 flex flex-col gap-5">
+        <h1 class="text-3xl font-bold text-center">Crear Tarea</h1>
+        <input type="text" placeholder="title" class="border border-gray-500 h-[50px] rounded-lg outline-blue-500 p-2"
+          id="title" required />
+        <input type="text" placeholder="description"
+          class="border border-gray-500 h-[50px] rounded-lg outline-blue-500 p-2" id="description" required />
+
+        <select id="is_completed" class="border border-gray-500 h-[50px] rounded-lg outline-blue-500 p-2">
+          <option value="false">Incompleta</option>
+          <option value="true">Completa</option>
+        </select>
+
+        <button type="submit" class="bg-blue-500 text-white p-4 rounded-lg cursor-pointer hover:bg-blue-600">
+          Create
+        </button>
+      </form>
+    </div>
+  </main>
+
+   <script src="assets/js/getProfile.js"></script>
+  <script src="assets/js/newTasks.js"></script>
+  <script src="assets/js/logOut.js"></script>
+</body>
+
+</html>
