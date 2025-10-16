@@ -1,5 +1,3 @@
-// app.js
-
 import express from "express";
 import "dotenv/config";
 import cors from "cors";
@@ -16,7 +14,6 @@ import authRoutes from "./src/routes/auth.routes.js";
 import taskRoutes from "./src/routes/task.routes.js";
 import reporteRoutes from "./src/routes/reporteRoutes.js";
 import userRoutes from "./src/routes/user.routes.js";
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
