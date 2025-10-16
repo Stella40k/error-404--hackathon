@@ -1,35 +1,30 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../config/database.js";
-import { UserModel } from "./user.model.js";
+import mongoose from "mongoose";
 
-export const TaskModel = sequelize.define(
-  "Task",
+const taskSchema = new mongoose.Schema(
   {
     title: {
-      type: DataTypes.STRING(100),
-      unique: true,
-      allowNull: false,
+      type: String,
+      required: true,
+      trim: true,
     },
     description: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
+      type: String,
+      required: true,
+      trim: true,
     },
     is_completed: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      type: Boolean,
+      default: false,
+    },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
   },
   {
-    // timestamps: false,
-    // createdAt: created_at,
+    timestamps: true,
   }
 );
 
-// RELACIONES UNO A MUCHOS
-TaskModel.belongsTo(UserModel, {
-  foreignKey: "user_id",
-  as: "author",
-  onDelete: "CASCADE",
-});
-
-UserModel.hasMany(TaskModel, { foreignKey: "user_id", as: "tasks" });
+export default mongoose.model("Task", taskSchema);

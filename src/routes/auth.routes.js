@@ -7,16 +7,11 @@ import {
 } from "../controllers/auth.controllers.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
-export const authRoutes = Router();
+const router = Router();
 
-// loguearse
-authRoutes.post("/login", login);
+router.post("/login", login);
+router.post("/register", register);
+router.get("/profile", authMiddleware, profile);
+router.post("/logout", logout);
 
-// registrarse
-authRoutes.post("/register", register);
-
-// // ver perfil del logueado
-authRoutes.get("/profile", authMiddleware, profile);
-
-// // desloguearse;
-authRoutes.post("/logout", logout);
+export default router;

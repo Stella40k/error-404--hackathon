@@ -1,33 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="assets/js/publicRoutes.js"></script>
     <title>HTML - Login</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <main class="h-screen bg-[#05212a] flex justify-center items-center">
-        <form class="bg-white flex flex-col rounded-lg p-5 gap-2" onsubmit="login(event)">
-            <h1 class="text-2xl font-bold">Log in</h1>
-            
-            <input type="text" placeholder="username" id="username"
-                class="border border-gray-300 rounded-sm h-[50px] w-[250px] p-2 outline-blue-300" required>
-                
-            <input type="password" placeholder="password" id="password"
-                class="border border-gray-300 rounded-sm h-[50px] w-[250px] p-2 outline-blue-300" required>
+      <form
+        class="bg-white flex flex-col rounded-lg p-5 gap-2"
+        onsubmit="login(event)"
+      >
+        <h1 class="text-2xl font-bold">Log in</h1>
 
-            <button class="bg-blue-500 text-white rounded-sm h-[50px] font-semibold outline-blue-300">Log in</button>
-            <div class="text-center">
-                <span>O, <a href="register.html" class="text-blue-600">registrate</a></span>
-            </div>
-        </form>
+        <input
+          type="text"
+          placeholder="username"
+          id="username"
+          class="border border-gray-300 rounded-sm h-[50px] w-[250px] p-2 outline-blue-300"
+          required
+        />
+
+        <input
+          type="password"
+          placeholder="password"
+          id="password"
+          class="border border-gray-300 rounded-sm h-[50px] w-[250px] p-2 outline-blue-300"
+          required
+        />
+
+        <button
+          class="bg-blue-500 text-white rounded-sm h-[50px] font-semibold outline-blue-300"
+        >
+          Log in
+        </button>
+        <div class="text-center">
+          <span
+            >O,
+            <a href="register.html" class="text-blue-600">registrate</a></span
+          >
+        </div>
+      </form>
     </main>
 
     <script src="assets/js/login.js"></script>
-</body>
-
+  </body>
 </html>

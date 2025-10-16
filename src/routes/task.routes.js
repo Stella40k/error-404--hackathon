@@ -1,9 +1,15 @@
 import { Router } from "express";
-import { createTask, getAllTasks, getAllTasksByUserId } from "../controllers/task.controllers.js";
+import {
+  createTask,
+  getAllTasks,
+  getAllTasksByUserId,
+} from "../controllers/task.controllers.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
-export const taskRoutes = Router();
+const router = Router();
 
-taskRoutes.get("/tasks", authMiddleware, getAllTasks);
-taskRoutes.get("/tasks-by-user", authMiddleware, getAllTasksByUserId);
-taskRoutes.post("/tasks", authMiddleware, createTask);
+router.get("/tasks", authMiddleware, getAllTasks);
+router.get("/tasks-by-user", authMiddleware, getAllTasksByUserId);
+router.post("/tasks", authMiddleware, createTask);
+
+export default router;

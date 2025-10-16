@@ -1,42 +1,37 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../config/database.js";
-import { PersonModel } from "./person.model.js";
+import mongoose from "mongoose";
 
-export const UserModel = sequelize.define(
-  "User",
+const userSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    lastname: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     username: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
     },
     email: {
-      type: DataTypes.STRING(100),
+      type: String,
+      required: true,
+      trim: true,
       unique: true,
-      allowNull: false,
     },
     password: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
+      type: String,
+      required: true,
     },
   },
   {
-    // paranoid: true,
+    timestamps: true,
   }
 );
 
-// RELACIONES UNO A UNO
-UserModel.belongsTo(PersonModel, {
-  foreignKey: "person_id",
-  as: "person",
-  onDelete: "CASCADE",
-});
-
-PersonModel.hasOne(UserModel, { foreignKey: "person_id", as: "user" });
-
-PersonModel.addHook("afterDestroy", async (person) => {
-  const user = await UserModel.findOne({
-    where: { person_id: person.dataValues.id },
-  });
-
-  await user.destroy();
-});
+export default mongoose.model("User", userSchema);
