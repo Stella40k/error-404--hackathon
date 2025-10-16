@@ -28,6 +28,16 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    bio: {
+      type: String,
+      trim: true,
+      default: "Ciudadano comprometido con mejorar mi comunidad.",
+    },
+    role: {
+      type: String,
+      enum: ["User", "Pro"],
+      default: "User",
+    },
   },
   {
     timestamps: true,

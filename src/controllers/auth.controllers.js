@@ -76,8 +76,36 @@ export const profile = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  // En un esquema basado en tokens JWT en el cliente, el logout
-  // se maneja en el frontend eliminando el token.
-  // Esta ruta puede ser simbólica o usarse para listas de tokens inválidos.
   return res.json({ message: "Logout exitoso" });
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, lastname, username, bio } = req.body;
+    const userId = req.user.id;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { name, lastname, username, bio },
+      { new: true } // Devuelve el documento actualizado
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.status(200).json({
+      message: "Perfil actualizado exitosamente",
+      user: updatedUser,
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res
+        .status(400)
+        .json({ message: "El nombre de usuario ya está en uso." });
+    }
+    res
+      .status(500)
+      .json({ message: "Error en el servidor", error: error.message });
+  }
 };
