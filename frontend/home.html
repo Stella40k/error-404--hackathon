@@ -1,63 +1,196 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- <script src="assets/js/privateRoutes.js"></script> -->
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UrbiVox - Reportes Ciudadanos</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
       type="text/css"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
     />
-    <title>HTML - Login</title>
-</head>
-<body>
-   <main class="h-screen bg-[#05212a]">
-    <nav class="bg-slate-950 flex justify-between p-4">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/style/home.css" />
 
-      <div>
-        <a href="home.html" class="text-2xl font-bold text-white">
-          TasksApp
-        </a>
-        <a href="home.html" class="text-md text-white">
-          All Tasks
-        </a>
-        <a href="mytasks.html" class="text-md text-white">
-          My Tasks
-        </a>
-      </div>
+    <style>
+      /* Definición de la paleta de colores como variables CSS */
+      :root {
+        --color-bg: #fffdee; /* Amarillo claro */
+        --color-primary: #6cb52d; /* Verde Oscuro */
+        --color-accent: #164a41; /* Verde Lima */
+        --color-text-dark: #1b2a19; /* Verde muy oscuro para texto */
+        --color-dark-blue: #262c5f;
+        --color-darkest: #181731;
+        font-family: "Poppins", sans-serif;
+      }
+      /* Clases de utilidad para aplicar los colores fácilmente */
+      .ring-accent {
+        --tw-ring-color: var(--color-accent);
+      }
+    </style>
+  </head>
 
-      <div class="flex flex-wrap gap-2">
-        <div class="flex justify-center items-center text-white gap-2">
-          <div class="border rounded-full h-8 w-8 flex justify-center items-center">
-            <i class="ph ph-user text-xl"></i>
+  <body style="background-color: var(--color-bg)">
+    <div class="flex h-screen">
+      <aside
+        class="w-64 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col"
+      >
+        <div class="h-16 flex items-center px-4 border-b border-gray-200">
+          <div
+            class="h-8 w-8 rounded-md flex items-center justify-center"
+            style="background-color: var(--color-accent)"
+          >
+            <i class="ph ph-triangle text-white text-lg font-bold"></i>
           </div>
-          <span id="user-profile"></span>
+          <div class="ml-3">
+            <h2 class="text-md font-bold" style="color: var(--color-text-dark)">
+              UrbiVox
+            </h2>
+            <p class="text-xs text-gray-500">Reportes Ciudadanos</p>
+          </div>
         </div>
-        <div
-          id="logout"
-          class="flex justify-center items-center gap-1 cursor-pointer p-2 hover:bg-red-600 rounded-md transition-all duration-200"
-        >
-          <i class="ph ph-sign-out text-xl text-white"></i>
+        <div class="flex-grow flex flex-col justify-between p-4">
+          <div>
+            <div class="relative mb-4">
+              <i
+                class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              ></i>
+              <input
+                type="text"
+                placeholder="Buscar..."
+                class="w-full bg-gray-100 border-gray-200 rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2"
+                style="--tw-ring-color: var(--color-accent)"
+              />
+            </div>
+            <nav class="flex flex-col space-y-2">
+              <a
+                href="#"
+                class="flex items-center space-x-3 px-4 py-2.5 font-semibold rounded-lg"
+                style="
+                  background-color: color-mix(
+                    in srgb,
+                    var(--color-accent) 20%,
+                    transparent
+                  );
+                  color: var(--color-primary);
+                "
+              >
+                <i class="ph-fill ph-house text-lg"></i>
+                <span>Inicio</span>
+              </a>
+            </nav>
+          </div>
+          <div class="space-y-2">
+            <a
+              href="#"
+              class="flex items-center space-x-3 px-4 py-2.5 text-gray-600 hover:bg-gray-100 font-semibold rounded-lg"
+            >
+              <i class="ph ph-gear text-lg"></i>
+              <span>Configuración</span>
+            </a>
+            <div
+              id="sidebar-profile"
+              class="flex items-center space-x-3 px-4 py-2.5"
+            ></div>
+          </div>
         </div>
-      </div>
-    </nav>
+      </aside>
 
-    
-    <div class="flex flex-col justify-center container mx-auto ">
-      <div class="flex justify-between m-3">
-        <h1 class="text-3xl font-bold text-white">All tasks</h1>
-      </div>
-        
-        <div id="tasks-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        </div>
-      </div>
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+          <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+              <div class="flex items-center space-x-4">
+                <button class="text-gray-600 hover:text-gray-900">
+                  <i class="ph ph-list text-2xl"></i>
+                </button>
+                <h1
+                  class="text-xl font-bold"
+                  style="color: var(--color-text-dark)"
+                >
+                  UrbiVox
+                </h1>
+              </div>
+              <div class="flex items-center space-x-5">
+                <a href="#" class="text-gray-600 hover:text-gray-900"
+                  ><i class="ph ph-map-pin text-2xl"></i
+                ></a>
+                <div class="relative">
+                  <a href="#" class="text-gray-600 hover:text-gray-900"
+                    ><i class="ph ph-bell text-2xl"></i
+                  ></a>
+                </div>
+                <div
+                  class="flex items-center space-x-4 border-l border-gray-200 pl-5 ml-2"
+                >
+                  <div class="flex items-center space-x-2">
+                    <div
+                      class="h-9 w-9 rounded-full bg-gray-200 ring-2 ring-offset-2 ring-accent"
+                    ></div>
+                    <span
+                      id="user-profile-name"
+                      class="font-semibold text-sm"
+                      style="color: var(--color-text-dark)"
+                    ></span>
+                  </div>
+                  <button
+                    id="logout-button"
+                    title="Cerrar Sesión"
+                    class="text-gray-500 hover:text-red-600 transition-colors"
+                  >
+                    <i class="ph ph-sign-out text-2xl"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
 
-   </main> 
+        <main class="flex-1 p-6 lg:p-8">
+          <section
+            class="relative gradient-card text-white rounded-2xl p-8 md:p-12 overflow-hidden"
+          >
+            <div class="relative z-10">
+              <span
+                class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full"
+                >Plataforma Ciudadana</span
+              >
+              <h1 class="text-4xl md:text-4xl font-bold mt-4 max-w-lg">
+                Mejora tu Ciudad con tus Reportes
+              </h1>
+              <p
+                class="mt-4 max-w-xl"
+                style="color: var(--color-bg); opacity: 0.9"
+              >
+                Reporta problemas de infraestructura en tu comunidad y ayuda a
+                las autoridades a priorizar las reparaciones necesarias.
+              </p>
+              <a
+                href="#"
+                class="inline-flex items-center space-x-2 bg-white font-bold px-6 py-3 rounded-lg mt-8 hover:bg-gray-200 transition-colors"
+                style="color: var(--color-primary)"
+              >
+                <i class="ph ph-plus-circle text-xl"></i>
+                <span>Crear Reporte</span>
+              </a>
+            </div>
+            <div class="concentric-circles hidden md:block">
+              <div class="circle-inner-1"></div>
+              <div class="circle-inner-2"></div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
 
-   <script src="assets/js/getProfile.js"></script>
-   <script src="assets/js/tasks.js"></script>
-   <script src="assets/js/logOut.js"></script>
-</body>
+    <script src="/assets/js/getProfile.js"></script>
+    <script src="/assets/js/logOut.js"></script>
+  </body>
 </html>

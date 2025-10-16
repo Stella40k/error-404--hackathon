@@ -1,25 +1,33 @@
-const getProfile = async () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  // Si no hay token, no hacemos nada.
+  if (!localStorage.getItem("token")) {
+    return;
+  }
+
   try {
     const request = await fetch("/api/profile", {
-      // RUTA ACTUALIZADA
       headers: {
-        authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     });
-    const response = await request.json();
+
     if (!request.ok) {
-      alert("Error al obtener el profile");
-      // Si el token no es válido, redirigir al login
+      // Si el token es inválido o expiró, redirigimos al login
       if (request.status === 401) {
+        localStorage.removeItem("token");
         window.location.replace("/index.html");
       }
-      return;
+      throw new Error("Error al obtener el perfil");
     }
-    document.getElementById(
-      "user-profile"
-    ).innerText = `${response.user.name} ${response.user.lastname}`;
+
+    const response = await request.json();
+    const userNameElement = document.getElementById("user-profile-name");
+
+    if (userNameElement && response.user) {
+      // Mostramos el nombre y apellido del usuario
+      userNameElement.innerText = `${response.user.name} ${response.user.lastname}`;
+    }
   } catch (error) {
-    console.log(error);
+    console.error(error.message);
   }
-};
-document.addEventListener("DOMContentLoaded", getProfile);
+});

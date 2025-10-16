@@ -1,6 +1,13 @@
-const logOut = () => {
-    localStorage.removeItem('token');
-    window.location.replace('index.html')
-}
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutButton = document.getElementById("logout-button");
 
-document.getElementById('logout').addEventListener('click', logOut);
+  // Si el botón de logout existe, le añadimos el evento
+  if (logoutButton) {
+    logoutButton.addEventListener("click", () => {
+      // Borramos el token del almacenamiento local
+      localStorage.removeItem("token");
+      // Redirigimos a la página de inicio de sesión
+      window.location.replace("/index.html");
+    });
+  }
+});
