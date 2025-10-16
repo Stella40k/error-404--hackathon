@@ -8,12 +8,15 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Importa la conexión a la DB
+// Importa la conexión a la     DB
 import { connectDB } from "./src/config/database.js";
 
-// Importa ÚNICAMENTE las rutas de MongoDB que están en uso
+// Importa ÚNICAMENTE las rutas de MongoDB que están  en uso
 import authRoutes from "./src/routes/auth.routes.js";
 import taskRoutes from "./src/routes/task.routes.js";
+import reporteRoutes from "./src/routes/reporteRoutes.js";
+import userRoutes from "./src/routes/user.routes.js";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,6 +36,8 @@ app.use(express.static(path.join(__dirname, "frontend")));
 // Rutas de la API
 app.use("/api", authRoutes);
 app.use("/api", taskRoutes);
+app.use("/api", reporteRoutes);
+app.use("/api", userRoutes);
 
 // Ruta "Catch-All" para el Frontend
 app.get("*", (req, res) => {
