@@ -33,4 +33,8 @@ const ReporteSchema = new mongoose.Schema({
 ReporteSchema.index({ location: "2dsphere" });
 
 const Reporte = mongoose.model("Reporte", ReporteSchema);
+<<<<<<< HEAD
 export default Reporte;
+=======
+export default Reporte;
+>>>>>>> dev-vivi2
