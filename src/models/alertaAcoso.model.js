@@ -29,7 +29,7 @@ const alertaAcosoSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-// Índice 2dsphere obligatorio para consultas geográficas
+// Índice 2dsphere obligatorio para consultas geográfi
 alertaAcosoSchema.index({ location: "2dsphere" });
 alertaAcosoSchema.index({ fechaAlerta: -1 });
 alertaAcosoSchema.index({ activa: 1 });
