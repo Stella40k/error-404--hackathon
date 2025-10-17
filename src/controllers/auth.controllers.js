@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import Reporte from "../models/reporte.model.js"; // Importar el modelo de Reporte
 import { generateToken } from "../utils/jwt.util.js";
 import bcrypt from "bcryptjs";
 
@@ -134,6 +135,7 @@ export const updateAccountCredentials = async (req, res) => {
       .json({ message: "Error en el servidor", error: error.message });
   }
 };
+
 export const deleteAccount = async (req, res) => {
   const { password } = req.body;
   const userId = req.user.id;
@@ -155,11 +157,19 @@ export const deleteAccount = async (req, res) => {
       return res.status(401).json({ message: "La contraseña es incorrecta." });
     }
 
+    // --- LÓGICA AÑADIDA ---
+    // Eliminar todos los reportes asociados al usuario
+    await Reporte.deleteMany({ author: userId });
+
+    // Eliminar el usuario
     await User.findByIdAndDelete(userId);
 
     res
       .status(200)
-      .json({ message: "Tu cuenta ha sido eliminada exitosamente." });
+      .json({
+        message:
+          "Tu cuenta y todos tus reportes han sido eliminados exitosamente.",
+      });
   } catch (error) {
     res
       .status(500)
