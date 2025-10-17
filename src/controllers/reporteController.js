@@ -2,65 +2,48 @@ import Reporte from "../models/reporte.model.js";
 
 export const getAllReports = async (req, res) => {
   try {
-    const { type, minRisk, limit } = req.query;
-    const filter = {};
-    if (type) filter.tipoProblema = type;
-    if (minRisk) filter.riesgoPercibido = { $gte: Number(minRisk) };
-    const query = Reporte.find(filter);
-    if (limit) query.limit(Number(limit));
-    const reports = await query.exec();
+    const reports = await Reporte.find({})
+      .populate("author", "username") // Trae el username del autor
+      .sort({ createdAt: -1 }); // Ordena del más nuevo al más antiguo
     res.json(reports);
   } catch (error) {
-    res.status(500).json({ message: "Error al obtener reportes", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error al obtener reportes", error: error.message });
   }
 };
 
 export const createReport = async (req, res) => {
   try {
-    const { tipoProblema, riesgoPercibido, descripcion, location } = req.body;
-    if (!tipoProblema || !riesgoPercibido || !descripcion || !location) {
-      return res.status(400).json({ message: "Faltan campos obligatorios" });
-    }
-    if (
-      typeof riesgoPercibido !== "number" ||
-      riesgoPercibido < 1 ||
-      riesgoPercibido > 5
-    ) {
-      return res.status(400).json({ message: "El riesgoPercibido debe estar entre 1 y 5" });
-    }
+    const { titulo, tipoProblema, subcategoria, descripcion } = req.body;
+    const authorId = req.user.id; // Obtenido del token gracias al middleware
 
-    // Aceptar tanto GeoJSON { type, coordinates } como { lat, lng }
-    let geoLocation;
-    if (Array.isArray(location.coordinates)) {
-      const [lng, lat] = location.coordinates;
-      geoLocation = {
-        type: "Point",
-        coordinates: [Number(lng), Number(lat)],
-      };
-    } else if (
-      Object.prototype.hasOwnProperty.call(location, "lat") &&
-      Object.prototype.hasOwnProperty.call(location, "lng")
-    ) {
-      geoLocation = {
-        type: "Point",
-        coordinates: [Number(location.lng), Number(location.lat)],
-      };
-    } else {
-      return res.status(400).json({
-        message:
-          "Formato de location inválido. Use { lat, lng } o GeoJSON { type, coordinates }",
-      });
+    if (!titulo || !tipoProblema || !subcategoria || !descripcion) {
+      return res
+        .status(400)
+        .json({ message: "Todos los campos son obligatorios" });
     }
 
     const nuevoReporte = new Reporte({
+      titulo,
       tipoProblema,
-      riesgoPercibido,
+      subcategoria,
       descripcion,
-      location: geoLocation,
+      author: authorId,
     });
+
     await nuevoReporte.save();
-    res.status(201).json(nuevoReporte);
+
+    // Devolvemos el reporte recién creado con la info del autor para mostrarlo dinámicamente
+    const populatedReport = await Reporte.findById(nuevoReporte._id).populate(
+      "author",
+      "username"
+    );
+
+    res.status(201).json(populatedReport);
   } catch (error) {
-    res.status(500).json({ message: "Error al crear reporte", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error al crear reporte", error: error.message });
   }
 };

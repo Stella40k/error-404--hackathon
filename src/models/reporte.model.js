@@ -1,36 +1,34 @@
 import mongoose from "mongoose";
 
-const ReporteSchema = new mongoose.Schema({
-  location: {
-    type: {
+const ReporteSchema = new mongoose.Schema(
+  {
+    titulo: {
       type: String,
-      enum: ["Point"],
+      required: true,
+      trim: true,
+    },
+    tipoProblema: {
+      type: String,
       required: true,
     },
-    coordinates: {
-      type: [Number],
+    subcategoria: {
+      type: String,
+      required: true,
+    },
+    descripcion: {
+      type: String,
+      required: true,
+    },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
   },
-  tipoProblema: {
-    type: String,
-    required: true,
-  },
-  riesgoPercibido: {
-    type: Number,
-    required: true,
-  },
-  descripcion: {
-    type: String,
-    required: true,
-  },
-  fechaReporte: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
-ReporteSchema.index({ location: "2dsphere" });
+  {
+    timestamps: true, // Esto añade createdAt y updatedAt
+  }
+);
 
 const Reporte = mongoose.model("Reporte", ReporteSchema);
 export default Reporte;
