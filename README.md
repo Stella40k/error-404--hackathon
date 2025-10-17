@@ -1,182 +1,59 @@
-# 🧭 Plan de Desarrollo – Termómetro Vecinal (Versión MVP Mockeada)
+Plan Maestro de Desarrollo - UrbiVox MVP Final
 
-📅 *Objetivo:* Desarrollar una versión funcional y navegable del MVP de Termómetro Vecinal usando *HTML, CSS, Bootstrap, JavaScript, Leaflet (sin React), Node.js, Express y MongoDB*, con datos simulados
+Este documento describe el plan de trabajo detallado para la implementación del Producto Mínimo Viable (MVP) de UrbiVox durante la Hackathon.
 
-🧠 *Estrategia general:*  
-Construir una aplicación web usable que simule la lógica principal (reporte anónimo, visualización en mapa, alertas y dashboard para autoridades).  
-Todas las vistas deben ser 100% navegables, con flujos de interacción realistas y visualmente consistentes.
+📅 Objetivo Principal (MVP)Implementar el reporte anónimo, la asignación automática de gravedad, el Mapa de Calor estratégico y la autenticación para el Dashboard de análisis.🧠
 
----
+Estrategia ClaveEl Backend asigna la Gravedad Objetiva
 
-## ✅ 1. Configuración del Proyecto
+(1-5) basada en la subcategoría de reporte, eliminando la necesidad de input de gravedad por parte del usuario.
 
-- [ ] Crear repositorio termometro-vecinal
-- [ ] Estructura base: 
-  - [ ] Frontend (public/ y src/)
-  - [ ] Backend (server/)
-- [ ] Configurar Node.js + Express + MongoDB
-- [ ] Instalar dependencias principales:
-  - [ ] express, mongoose, express-validator
-  - [ ] dotenv, cors, nodemon
-  - [ ] bcrypt, jsonwebtoken (si se incluye autenticación)
-  - [ ] faker o datos mockeados para pruebas
-- [ ] Boilerplate frontend: HTML, CSS, Bootstrap, JS, Leaflet
-- [ ] Setup de README y documentación inicial
+✅ 1. Fase de Configuración y Modelado (Backend Base)
 
----
+Objetivo: Establecer la arquitectura del servidor y la base de datos para la seguridad.TareaRol PrincipalDetalle Técnico Clave A1. Configuración CoreBackendCrear package.json con "type": "module". Instalar express, mongoose, dotenv, bcrypt, jsonwebtoken.
 
-## 🧩 2. Estructura de Carpetas
+A2. Modelos EsencialesBackendCrear Incidente.js (con gravedad_objetiva y GeoJSON Point) y User.js (para Auth del Dashboard).
 
+A3. Base de DatosBackendConfigurar la conexión a MongoDB (db.js). Crear una función de seeding para cargar datos mockeados iniciales para pruebas.
 
-project-root/
-│
-├── public/               # Archivos estáticos (HTML, CSS, JS, imágenes)
-│   ├── index.html
-│   ├── map.html
-│   ├── dashboard.html
-│   └── assets/
-│
-├── src/                  # JS frontend modular
-│   ├── js/
-│   ├── css/
-│   └── components/
-│
-├── server/               # Backend Node.js + Express
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
-│   └── utils/
-│
-├── mock/                 # Datos simulados para demo
-│   └── reports.json
-│
-├── .env
-├── package.json
-├── README.md
-└── ...
+A4. Frontend BaseFrontendCrear public/index.html (con el div del mapa) y login.html. Enlazar Bootstrap y Leaflet (CSS/JS).
 
+🚀 2. Fase Core: API de Reporte y Gravedad Automática (Foco Principal)Objetivo: Implementar la lógica de negocio que traduce la categoría del usuario a un valor de riesgo numérico objetivo.
 
----
+TareaRol PrincipalMódulo Clave / Detalle B1. Matriz de GravedadBackendCodificar la Matriz de Ponderación Fija (Tabla de Subcategorías vs. Valor 1-5) en el controlador (reporteController.js).
 
-## 🧱 3. Fases de Desarrollo (Roadmap Técnico)
+B2. API de Lectura (Mapa)BackendImplementar GET /api/incidents (Ruta pública). El controlador debe aceptar filtros (type, minRisk, etc.) para devolver los incidentes.
 
-### 🚀 Fase 1 – Setup Inicial
+B3. API de Escritura (POST)BackendImplementar POST /api/reports. El controlador debe: 1) Asignar el valor de gravedad_objetiva basándose en la subcategoría recibida, y 2) Aplicar la Lógica Anti-Spam antes de guardar en MongoDB.
 
-- [ ] Crear estructura de carpetas base
-- [ ] Configurar servidor Express básico
-- [ ] Conectar a MongoDB (o usar datos mockeados en mock/reports.json)
-- [ ] Servir archivos estáticos
-- [ ] Crear modelo básico de reporte de problema urbano
+B4. API de Alerta SilenciosaBackendImplementar POST /api/alerts/acoso (Guarda ubicación/hora). Esto alimenta la funcionalidad de Reacción Rápida.
 
----
+🗺️ 3. Fase Mapa, Visualización y Reacción (Coordinación)Objetivo: Lograr la visualización de los datos ponderados y las herramientas de intervención directa.
 
-### 🗺 Fase 2 – Mapa Interactivo (Leaflet JS)
+TareaRol PrincipalMódulo Clave / Detalle
 
-- [ ] Página principal con mapa Leaflet
-- [ ] Mostrar markers por tipo de problema (iluminación, calles, abandono, tránsito)
-- [ ] Filtros y leyenda visual
-- [ ] Actualización en tiempo real (mock/fetch)
+C1. Inicialización y ConexiónFrontendjs/map.js y js/main.js (Módulos ES). Inicializar Leaflet y la función loadIncidents() que llama a GET /api/incidents.
 
----
+C2. Visualización de RiesgoFrontendjs/map.js: La función loadIncidents debe leer el valor gravedad_objetiva y usarlo para definir el color o tamaño del marcador o punto en el Mapa de Calor.
 
-### 📝 Fase 3 – Reporte Anónimo de Problemas
+C3. Filtros en UIFrontendImplementar los controles de filtro (Bootstrap) y la lógica en js/main.js para enviar los filtros como query parameters a la API.
 
-- [ ] Formulario Bootstrap para reportar problema
-  - Tipo de problema
-  - Comentario
-  - Ubicación (geolocalización/selección en mapa)
-- [ ] Validación de datos (frontend y backend)
-- [ ] POST a /api/reports (mock o real)
-- [ ] Mensaje de éxito/error
+C4. Reporte en UIFrontendFormulario de reporte simple. La selección de Categoría/Subcategoría es la única entrada de clasificación. Implementar el click en el mapa para obtener coordenadas.
 
----
+C5. Reacción InmediataFrontendImplementar los botones de llamada directa (tel:911, tel:107) y el botón para el POST silencioso a la ruta /api/alerts/acoso.
 
-### 🔔 Fase 4 – Alertas Visuales
+🔑 4. Fase de Seguridad y Dashboard (Inteligencia Estratégica)Objetivo: Proteger el acceso y exponer la inteligencia urbana para las autoridades. TareaRol PrincipalMódulo Clave / Detalle
 
-- [ ] Indicador de zonas con acumulación de reportes
-- [ ] Notificaciones en la app (banners, toasts)
-- [ ] Visualización de nuevos reportes cerca del usuario
+D1. Autenticación y SeguridadBackendImplementar el authMiddleware.js (verificación JWT) y las rutas de registro/login (POST /api/auth/*).
 
----
+D2. API de CorrelaciónBackendImplementar GET /api/dashboard/stats (Protegida). Lógica de Mongoose Aggregation para calcular la Matriz de Intervención (tendencias horarias y por subcategoría).
 
-### 📊 Fase 5 – Dashboard para Municipio
+D3. API de ExportaciónBackendImplementar GET /api/dashboard/export (Protegida). Lógica para generar CSV aplicando el redondeo de coordenadas para la anonimización de datos.
 
-- [ ] Página dashboard con:
-  - Gráficos (Chart.js): reportes por tipo, zona, fecha
-  - Tabla de reportes
-  - Exportación de datos (CSV/JSON)
-- [ ] Acceso solo para usuarios autenticados (mock o real)
+D4. Interfaz DashboardFrontendCrear dashboard.html. js/dashboard.js consume las rutas protegidas y usa Chart.js para visualizar los gráficos de Matriz de Intervención y tendencias.
 
----
+D5. Flujo de LoginFrontendlogin.html / js/auth.js: Manejo de envío de credenciales, almacenamiento del token y redirección al Dashboard.
 
-### 🔑 Fase 6 – Autenticación Opcional
+🏆 Criterios de Éxito del MVP (Foco en Ponderación)
 
-- [ ] Login/registro básico
-- [ ] Hash de contraseñas (bcrypt)
-- [ ] JWT para sesiones (si se implementa)
-- [ ] Modo anónimo disponible para reporte
-
----
-
-### 🎨 Fase 7 – UI / UX Polishing
-
-- [ ] Tema claro/oscuro (toggle)
-- [ ] Animaciones sutiles (spinners, mensajes)
-- [ ] Logo/tagline
-- [ ] Accesibilidad básica (contraste, ARIA)
-- [ ] Navbar/sidebar navegable
-
----
-
-### 🧪 Fase 8 – Mock Data y Simulación
-
-- [ ] Crear archivos .json simulados para:
-  - Reportes
-  - Usuarios
-  - Estadísticas
-- [ ] Funciones de carga simulada
-- [ ] Endpoints mockeados para demo
-
----
-
-## 🧠 Ejemplo de Datos Mockeados
-
-json
-{
-  "ubicacion": { "lat": -26.182, "lng": -58.175 },
-  "tipo_problema": "Mala iluminación",
-  "comentario": "Muchos focos rotos y poca gente.",
-  "fecha": "2025-10-15T12:34:00Z"
-}
-
-
----
-
-## 🧭 Entregables de la Versión MVP
-
-| Entregable             | Estado | Prioridad |
-|------------------------|--------|-----------|
-| Estructura de proyecto |   ☐    |   Alta    |
-| Home + Mapa (Leaflet)  |   ☐    |   Alta    |
-| Reporte anónimo        |   ☐    |   Alta    |
-| Alertas visuales       |   ☐    |   Alta    |
-| Dashboard municipio    |   ☐    |   Media   |
-| Auth básica            |   ☐    |   Media   |
-| UI animada             |   ☐    |   Media   |
-| Documentación README   |   ☐    |   Alta    |
-
----
-
-## 🧩 Extras Recomendados para la Demo
-
-- Splash animado con logo
-- Mapa Leaflet destacado
-- Indicadores visuales de zonas problemáticas
-- Botón flotante “Reportar problema”
-- Simulación de push (“Nuevo reporte en tu zona”)
-- Branding y tagline (“Tu percepción, nuestra ciudad”)
-
----
-
-
+El éxito de UrbiVox se medirá por la capacidad de demostrar que:La Gravedad es Automática: El sistema puede recibir un POST con la subcategoría (ej. "Robo con Violencia") y guardarlo con gravedad_objetiva: 5 sin intervención del usuario.Visualización Estratégica: El mapa utiliza esa gravedad_objetiva para crear un Mapa de Calor visible y significativo.Inteligencia Accionable: El Dashboard protegido muestra la Matriz de Intervención (tendencias) alimentada por la data ponderada.
