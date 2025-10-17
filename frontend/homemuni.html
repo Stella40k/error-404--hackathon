@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UrbiVox - Panel de Gestión Municipal</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/frontend/assets/style/home.css" />
+
+    <style>
+      :root {
+        --color-primary: #6cb52d;
+        --color-accent: #164a41;
+        --color-text-dark: #1b2a19;
+        
+        /* Colores para estados de reportes */
+        --color-sin-atender: #facc15; /* yellow-400 */
+        --color-en-proceso: #3b82f6; /* blue-500 */
+        --color-resuelto: #10b981; /* emerald-500 */
+        
+        font-family: "Poppins", sans-serif;
+      }
+      .ring-accent {
+        --tw-ring-color: var(--color-accent);
+      }
+      /* Estilos para badges de estado */
+      .badge-sin-atender {
+          background-color: #fef3c7; /* yellow-100 */
+          color: #a16207; /* amber-700 */
+      }
+      .badge-en-proceso {
+          background-color: #dbeafe; /* blue-100 */
+          color: #1d4ed8; /* blue-700 */
+      }
+      .badge-resuelto {
+          background-color: #d1fae5; /* emerald-100 */
+          color: #065f46; /* emerald-700 */
+      }
+      /* Estilo para hacer la tabla más compacta */
+      .compact-table td, .compact-table th {
+          padding-top: 0.5rem; /* py-2 */
+          padding-bottom: 0.5rem; /* py-2 */
+          padding-left: 0.75rem; /* px-3 */
+          padding-right: 0.75rem; /* px-3 */
+      }
+      .compact-table th:first-child, .compact-table td:first-child {
+        padding-left: 1.5rem; /* px-6 */
+      }
+      .compact-table th:last-child, .compact-table td:last-child {
+        padding-right: 1.5rem; /* px-6 */
+      }
+      /* Clase CSS para ocultar filas de la tabla (para el filtro JS) */
+      .hidden-row {
+        display: none;
+      }
+      .subcategory-panel {
+        transition: all 0.3s ease-in-out;
+      }
+      .subcategory-panel::-webkit-scrollbar {
+        width: 6px;
+      }
+      .subcategory-panel::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      .subcategory-panel::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 10px;
+      }
+      .subcategory-panel::-webkit-scrollbar-thumb:hover {
+        background: #aaa;
+      }
+      .modal-overlay {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-50">
+    <nav class="bg-white border-b border-gray-200">
+        <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0">
+                    <img src="assets/images/municipalidad-logo.png" alt="Logo de la Municipalidad" class="h-8"/>
+                </div>
+                <div class="flex-shrink-0">
+                    <img src="assets/images/UrbiVox-Reportes-Ciudadanos-Largo.png" alt="UrbiVox - Reportes Ciudadanos" class="h-6"/>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="flex flex-grow overflow-hidden">
+      <aside
+        class="w-64 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col h-full"
+      >
+      <div class="h-16 flex items-center px-4 border-b border-gray-200 hidden">
+            <div>
+              <img src="/frontend/assets/images/Urbi.png" alt="Logo de UrbiVox" class="h-6"/>
+          </div>
+          <div class="ml-3">
+            <h2 class="text-md font-bold" style="color: var(--color-text-dark)">
+              UrbiVox
+            </h2>
+            <p class="text-xs text-gray-500">Reportes Ciudadanos</p>
+          </div>
+        </div>
+        <div class="flex-grow flex flex-col justify-between p-4">
+          <div>
+            <nav class="flex flex-col space-y-2">
+              <a
+                href="#"
+                class="flex items-center space-x-3 px-4 py-2.5 font-semibold rounded-lg"
+                style="
+                  background-color: color-mix(
+                    in srgb,
+                    var(--color-accent) 20%,
+                    transparent
+                  );
+                  color: var(--color-primary);
+                "
+              >
+              
+                <i class="ph-fill ph-house text-lg"></i>
+                <span>Inicio</span>
+              </a>
+               <a
+                href="reports_panel.html"
+                class="flex items-center space-x-3 px-4 py-2.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-100"
+              >
+                <i class="ph ph-list-numbers text-lg"></i>
+                <span>Reportes</span>
+              </a>
+               <a
+                href="#"
+                class="flex items-center space-x-3 px-4 py-2.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-100"
+              >
+                <i class="ph ph-map-pin-line text-lg"></i>
+                <span>Mapa de Incidencias</span>
+              </a>
+              </nav>
+          </div>
+          <div class="space-y-2">
+            
+              <div class="px-4 py-3 border-t border-gray-200 mt-auto">
+                <img 
+                    src="/frontend/assets/images/UrbiVox.png" 
+                    alt="UrbiVox - Reportes Ciudadanos" 
+                    class="h-8 w-auto mx-auto opacity-75" 
+                />
+            </div>
+              <div
+              id="sidebar-profile"
+              class="flex items-center space-x-2 px-4 py-2.5 border-t border-gray-200 pt-4"
+            >
+              <div
+                class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"
+              >
+                <i class="ph ph-user text-lg text-gray-600"></i>
+              </div>
+              <span
+                id="sidebar-user-profile-name"
+                class="font-semibold text-sm truncate"
+                style="color: var(--color-text-dark)"
+              >Departamento Gestión</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+          <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-end h-16">
+              <div class="flex items-center space-x-5">
+                
+                <a href="#" class="text-gray-600 hover:text-gray-900"
+                  ><i class="ph ph-bell text-2xl"></i
+                ></a>
+                <div class="relative ml-4">
+                  <button
+                    id="user-profile-button"
+                    class="flex items-center space-x-2 focus:outline-none"
+                  >
+                    <div
+                      class="h-9 w-9 rounded-full bg-gray-200 ring-2 ring-offset-2 ring-accent flex items-center justify-center"
+                    >
+                      <i class="ph ph-user text-xl text-gray-600"></i>
+                    </div>
+                  </button>
+                  <div
+                    id="profile-dropdown"
+                    class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border z-50"
+                  >
+                    <div class="px-4 py-3 border-b">
+                      <p
+                        id="dropdown-username"
+                        class="font-semibold text-sm truncate"
+                        style="color: var(--color-text-dark)"
+                      >Municipalidad</p>
+                      <p
+                        id="dropdown-email"
+                        class="text-xs text-gray-500 truncate"
+                      >gestion@urbivox.gob.ar</p>
+                    </div>
+                    <div class="py-1">
+                      <a
+                        href="/configuration.html"
+                        class="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <i class="ph ph-gear text-lg"></i>
+                        <span>Configuración</span>
+                      </a>
+                    </div>
+                    <div class="py-1 border-t">
+                      <button
+                        id="logout-button"
+                        class="w-full text-left flex items-center space-x-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        <i class="ph ph-sign-out text-lg"></i>
+                        <span>Cerrar Sesión</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="flex-1 p-6 lg:p-8">
+          <section
+            class="relative gradient-card text-white rounded-2xl p-8 md:p-12 overflow-hidden"
+          >
+            <div class="relative z-10">
+              <span
+                class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full"
+                >INICIO</span
+              >
+              <h1 class="text-4xl md:text-4xl font-bold mt-4 max-w-lg">
+                Visión general de los reportes ciudadanos
+              </h1>
+              <p
+                class="mt-4 max-w-xl"
+                style="color: var(--color-bg); opacity: 0.9"
+              >
+                Controla, asigna y da seguimiento a todas las incidencias de la comunidad.
+              </p>
+            </div>
+            <div class="concentric-circles hidden md:block">
+              <div class="circle-inner-1"></div>
+              <div class="circle-inner-2"></div>
+            </div>
+          </section>
+
+          <section class="mt-12">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-4 sm:space-y-0">
+                <h2
+                  class="text-2xl font-bold"
+                  style="color: var(--color-text-dark)"
+                >
+                  Reportes Recientes
+                </h2>
+                
+                <div class="flex items-center space-x-3">
+                    <label for="category-filter" class="text-sm font-medium text-gray-700 hidden lg:block">Filtrar por Categoría:</label>
+                    <select 
+                        id="category-filter" 
+                        class="block w-48 pl-3 pr-10 py-2 text-sm border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-accent focus:border-accent"
+                    >
+                        <option value="all">Todas las Categorías</option>
+                        <option value="delito">Delito</option>
+                        <option value="violencia">Violencia</option>
+                        <option value="transito">Tránsito</option>
+                        <option value="infraestructura">Infraestructura</option>
+                        <option value="otros">Otros</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg overflow-x-auto border border-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 compact-table" id="report-table">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Reporte / Categoría</th>
+                            <th class="px-3 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Ubicación</th>
+                            <th class="px-3 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Fecha</th>
+                            <th class="px-3 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Estado</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Detalles</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr class="report-row category-infraestructura">
+                            <td class="px-6 py-2 whitespace-nowrap">
+                                <p class="text-sm font-medium text-gray-900">Bache profundo</p>
+                                <p class="text-xs text-gray-500">Infraestructura</p>
+                            </td>
+                            <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 truncate max-w-xs">Av. Principal 123</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">Oct 15, 2025</td>
+                            <td class="px-3 py-2 whitespace-nowrap w-40">
+                                <select class="text-xs font-semibold px-2 py-1 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                                    <option value="sin-atender" selected class="text-amber-700">Sin Atender</option>
+                                    <option value="en-proceso" class="text-blue-700">En Proceso</option>
+                                    <option value="resuelto" class="text-emerald-700">Resuelto</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-2 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="#" class="text-indigo-600 hover:text-indigo-900">Ver</a>
+                            </td>
+                        </tr>
+                         <tr class="report-row category-transito">
+                            <td class="px-6 py-2 whitespace-nowrap">
+                                <p class="text-sm font-medium text-gray-900">Picadas en la noche</p>
+                                <p class="text-xs text-gray-500">Tránsito</p>
+                            </td>
+                            <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 truncate max-w-xs">Calle 5 y 8</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">Oct 14, 2025</td>
+                            <td class="px-3 py-2 whitespace-nowrap w-40">
+                                <select class="text-xs font-semibold px-2 py-1 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                                    <option value="sin-atender" class="text-amber-700">Sin Atender</option>
+                                    <option value="en-proceso" selected class="text-blue-700">En Proceso</option>
+                                    <option value="resuelto" class="text-emerald-700">Resuelto</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-2 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="#" class="text-indigo-600 hover:text-indigo-900">Ver</a>
+                            </td>
+                        </tr>
+                         <tr class="report-row category-delito">
+                            <td class="px-6 py-2 whitespace-nowrap">
+                                <p class="text-sm font-medium text-gray-900">Atraco a mano armada</p>
+                                <p class="text-xs text-gray-500">Delito</p>
+                            </td>
+                            <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 truncate max-w-xs">Barrio Las Flores</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">Oct 14, 2025</td>
+                            <td class="px-3 py-2 whitespace-nowrap w-40">
+                                <select class="text-xs font-semibold px-2 py-1 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                                    <option value="sin-atender" selected class="text-amber-700">Sin Atender</option>
+                                    <option value="en-proceso" class="text-blue-700">En Proceso</option>
+                                    <option value="resuelto" class="text-emerald-700">Resuelto</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-2 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="#" class="text-indigo-600 hover:text-indigo-900">Ver</a>
+                            </td>
+                        </tr>
+                         <tr class="report-row category-infraestructura">
+                            <td class="px-6 py-2 whitespace-nowrap">
+                                <p class="text-sm font-medium text-gray-900">Foco de alumbrado roto</p>
+                                <p class="text-xs text-gray-500">Infraestructura</p>
+                            </td>
+                            <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 truncate max-w-xs">Plaza San Martín</td>
+                            <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">Oct 13, 2025</td>
+                            <td class="px-3 py-2 whitespace-nowrap w-40">
+                                <select class="text-xs font-semibold px-2 py-1 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                                    <option value="sin-atender" class="text-amber-700">Sin Atender</option>
+                                    <option value="en-proceso" class="text-blue-700">En Proceso</option>
+                                    <option value="resuelto" selected class="text-emerald-700">Resuelto</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-2 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="#" class="text-indigo-600 hover:text-indigo-900">Ver</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="mt-6 flex justify-center">
+                <a 
+                    href="reports_panel.html"
+                    class="px-5 py-2.5 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition-colors flex items-center space-x-2"
+                >
+                    <i class="ph ph-list-numbers text-lg"></i>
+                    <span>Ver Todos los Reportes</span>
+                </a>
+            </div>
+          </section>
+
+          <section class="mt-12">
+            <h2
+              class="text-2xl font-bold mb-6"
+              style="color: var(--color-text-dark)"
+            >
+              Resumen por Categoría
+            </h2>
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start"
+            >
+              <div
+                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
+              >
+                <div class="flex justify-between items-start">
+                  <div class="bg-red-100 p-2 rounded-lg">
+                    <i class="ph ph-shield-warning text-2xl text-red-600"></i>
+                  </div>
+                </div>
+                <h3
+                  class="font-bold text-lg mt-4"
+                  style="color: var(--color-text-dark)"
+                >
+                  Delito
+                </h3>
+                <p class="text-sm text-gray-500 mt-1 mb-4">
+                  Robos, hurtos y vandalismo. (Alta Prioridad)
+                </p>
+                <button
+                  class="w-full flex justify-center items-center space-x-2 text-left bg-red-600 text-white p-3 rounded-lg hover:bg-red-700 font-semibold text-sm transition-colors"
+                >
+                  <i class="ph ph-siren-fill text-lg"></i>
+                  <span>Gestionar Incidencias</span>
+                </button>
+              </div>
+
+              <div
+                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
+              >
+                <div class="flex justify-between items-start">
+                  <div class="bg-purple-100 p-2 rounded-lg">
+                    <i
+                      class="ph ph-warning-octagon text-2xl text-purple-600"
+                    ></i>
+                  </div>
+                </div>
+                <h3
+                  class="font-bold text-lg mt-4"
+                  style="color: var(--color-text-dark)"
+                >
+                  Violencia
+                </h3>
+                <p class="text-sm text-gray-500 mt-1 mb-4">
+                  Violencia, acoso y agresiones. (Urgente)
+                </p>
+                <button
+                  class="w-full flex justify-center items-center space-x-2 text-left bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 font-semibold text-sm transition-colors"
+                >
+                  <i class="ph ph-user-check text-lg"></i>
+                  <span>Asignar Equipo</span>
+                </button>
+              </div>
+              
+              <div
+                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
+              >
+                <div class="flex justify-between items-start">
+                  <div class="bg-orange-100 p-2 rounded-lg">
+                    <i class="ph ph-car text-2xl text-orange-600"></i>
+                  </div>
+                </div>
+                <h3
+                  class="font-bold text-lg mt-4"
+                  style="color: var(--color-text-dark)"
+                >
+                  Tránsito
+                </h3>
+                <p class="text-sm text-gray-500 mt-1 mb-4">
+                  Problemas de circulación y vía pública.
+                </p>
+                <button
+                  class="w-full flex justify-center items-center space-x-2 text-left bg-orange-600 text-white p-3 rounded-lg hover:bg-orange-700 font-semibold text-sm transition-colors"
+                >
+                  <i class="ph ph-traffic-cone text-lg"></i>
+                  <span>Ver Patrullas</span>
+                </button>
+              </div>
+
+              <div
+                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
+              >
+                <div class="flex justify-between items-start">
+                  <div class="bg-yellow-100 p-2 rounded-lg">
+                    <i class="ph ph-warning text-2xl text-yellow-600"></i>
+                  </div>
+                </div>
+                <h3
+                  class="font-bold text-lg mt-4"
+                  style="color: var(--color-text-dark)"
+                >
+                  Infraestructura
+                </h3>
+                <p class="text-sm text-gray-500 mt-1 mb-4">
+                  Deterioro urbano, baches, luces rotas.
+                </p>
+                <button
+                  class="w-full flex justify-center items-center space-x-2 text-left bg-yellow-600 text-white p-3 rounded-lg hover:bg-yellow-700 font-semibold text-sm transition-colors"
+                >
+                  <i class="ph ph-wrench text-lg"></i>
+                  <span>Ver Mantenimiento</span>
+                </button>
+              </div>
+            </div>
+          </section>
+          
+        </main>
+      </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterDropdown = document.getElementById('category-filter');
+            const reportRows = document.querySelectorAll('.report-row');
+
+            // 1. Lógica de Filtrado de la Tabla
+            const applyFilter = () => {
+                const selectedCategory = filterDropdown.value;
+
+                reportRows.forEach(row => {
+                    row.classList.add('hidden-row');
+
+                    if (selectedCategory === 'all') {
+                        row.classList.remove('hidden-row');
+                        return;
+                    }
+
+                    if (row.classList.contains(`category-${selectedCategory}`)) {
+                        row.classList.remove('hidden-row');
+                    }
+                });
+            };
+            filterDropdown.addEventListener('change', applyFilter);
+            
+            // 2. Lógica para mostrar/ocultar subcategorías
+            document.querySelectorAll('[id^="toggle-button-"]').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const panelId = event.currentTarget.id.replace('toggle-button', 'subcategory-panel');
+                    const panel = document.getElementById(panelId);
+                    const icon = event.currentTarget.querySelector('.ph-caret-down');
+
+                    if (panel) {
+                        panel.classList.toggle('hidden');
+                        icon.classList.toggle('rotate-180');
+                    }
+                });
+            });
+
+            // 3. Lógica para el Modal (Abriendo y Cerrando)
+            // Se mantiene el código, aunque el modal no está presente en el HTML actual.
+            const openModalButton = document.getElementById('open-report-modal');
+            const closeModalButton = document.getElementById('close-report-modal');
+            const cancelReportButton = document.getElementById('cancel-report-button');
+            const reportModal = document.getElementById('report-modal');
+
+            if (openModalButton) {
+                openModalButton.addEventListener('click', () => {
+                    reportModal.classList.remove('hidden');
+                });
+            }
+
+            const hideModal = () => {
+                if(reportModal) reportModal.classList.add('hidden');
+            };
+
+            if (closeModalButton) {
+                closeModalButton.addEventListener('click', hideModal);
+            }
+            if (cancelReportButton) {
+                cancelReportButton.addEventListener('click', hideModal);
+            }
+            if (reportModal) {
+                 reportModal.addEventListener('click', (e) => {
+                    if (e.target === reportModal) {
+                        hideModal();
+                    }
+                });
+            }
+
+
+            // 4. Lógica para Subcategorías en el Modal
+            // Se mantiene el código, aunque el modal no está presente en el HTML actual.
+            const categorySelect = document.getElementById('category-select');
+            const subcategoryContainer = document.getElementById('subcategory-container');
+            const subcategorySelect = document.getElementById('subcategory-select');
+
+            const subcategories = {
+                'delito': [
+                    { value: 'robo-violencia', text: 'Robo con Violencia (Atraco)' },
+                    { value: 'hurto', text: 'Hurto (Robo sin violencia)' },
+                    { value: 'vandalismo', text: 'Vandalismo y Daño' }
+                ],
+                'violencia': [
+                    { value: 'acoso', text: 'Acoso / Hostigamiento' },
+                    { value: 'pelea', text: 'Pelea o Agresión' },
+                    { value: 'violencia-genero', text: 'Violencia de Género (Urgente)' }
+                ],
+                'transito': [
+                    { value: 'accidente', text: 'Accidente Vial' },
+                    { value: 'conduccion-peligrosa', text: 'Conducción Peligrosa' },
+                    { value: 'obstruccion', text: 'Obstrucción / Peligro Vial' }
+                ],
+                'infraestructura': [
+                    { value: 'mala-iluminacion', text: 'Mala Iluminación' },
+                    { value: 'via-mal-estado', text: 'Vía Pública en Mal Estado (Baches)' }
+                ]
+            };
+            if (categorySelect) {
+              categorySelect.addEventListener('change', (e) => {
+                  const selectedCategory = e.target.value;
+                  subcategorySelect.innerHTML = ''; 
+
+                  if (selectedCategory && subcategories[selectedCategory]) {
+                      subcategoryContainer.classList.remove('hidden');
+                      const defaultOption = document.createElement('option');
+                      defaultOption.value = '';
+                      defaultOption.text = 'Selecciona una subcategoría';
+                      subcategorySelect.appendChild(defaultOption);
+
+                      subcategories[selectedCategory].forEach(sub => {
+                          const option = document.createElement('option');
+                          option.value = sub.value;
+                          option.text = sub.text;
+                          subcategorySelect.appendChild(option);
+                      });
+                  } else {
+                      subcategoryContainer.classList.add('hidden');
+                  }
+              });
+            }
+
+        });
+    </script>
+    <script src="/assets/js/getProfile.js"></script>
+    <script src="/assets/js/logOut.js"></script>
+    <script src="/assets/js/interactions.js"></script>
+  </body>
+</html>

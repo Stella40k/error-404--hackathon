@@ -1,56 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Registro - UrbiVox</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="assets/js/publicRoutes.js"></script>
-    <title>HTML - Register</title>
   </head>
-
-  <body>
-    <main class="h-screen bg-[#05212a] flex justify-center items-center">
-      <form
-        class="bg-white flex flex-col rounded-lg p-5 gap-2"
-        onsubmit="register(event)"
-      >
-        <h1 class="text-2xl font-bold">Register</h1>
-        <div class="grid grid-cols-2 gap-2">
-          <input
-            type="text"
-            placeholder="username"
-            id="username"
-            class="border border-gray-300 rounded-sm h-[50px] w-[250px] p-2 outline-blue-300 col-span-2"
-            required
-          />
-
-          <input
-            type="email"
-            placeholder="email"
-            id="email"
-            class="border border-gray-300 rounded-sm h-[50px] w-[250px] p-2 outline-blue-300 col-span-2"
-            required
-          />
-
-          <input
-            type="password"
-            placeholder="password"
-            id="password"
-            class="border border-gray-300 rounded-sm h-[50px] p-2 outline-blue-300 col-span-2"
-            required
-          />
+  <body class="h-screen bg-[#05212a] flex items-center justify-center">
+    <main class="bg-white rounded-lg p-6 w-[360px]">
+      <h1 class="text-xl font-bold mb-4">Crear cuenta</h1>
+      <form onsubmit="register(event)" id="register-form" class="flex flex-col gap-3">
+        <input id="username" type="text" placeholder="Usuario" required class="border p-2" />
+        <input id="password" type="password" placeholder="Contraseña" required class="border p-2" />
+        <label class="text-sm font-medium">Yo soy:</label>
+        <div class="flex gap-3">
+          <label class="flex items-center gap-2">
+            <input type="radio" name="role" value="municipio" /> Autoridad
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="radio" name="role" value="vecino" checked /> Vecino
+          </label>
         </div>
-        <button
-          type="submit"
-          class="bg-blue-500 text-white rounded-sm h-[50px] font-semibold outline-blue-300"
-        >
-          Register
-        </button>
-        <div class="text-center">
-          <span
-            >O,
-            <a href="index.html" class="text-blue-600">inicia sesion</a></span
-          >
+        <button type="submit" class="bg-blue-600 text-white p-2 rounded">Registrarse</button>
+        <div class="text-sm text-center">
+          <a href="index.html" class="text-blue-600">Volver a login</a>
         </div>
       </form>
     </main>
