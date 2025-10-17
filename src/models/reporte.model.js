@@ -1,38 +1,5 @@
     import mongoose from "mongoose";
 
-<<<<<<< HEAD
-    const ReporteSchema = new mongoose.Schema({
-    location: {
-        type: {
-        type: String,
-        enum: ["Point"],
-        required: true,
-        },
-        coordinates: {
-        type: [Number],
-        required: true,
-        },
-    },
-    tipoProblema: {
-        type: String,
-        required: true,
-    },
-    riesgoPercibido: {
-        type: Number,
-        required: true,
-    },
-    descripcion: {
-        type: String,
-        required: true,
-    },
-    fechaReporte: {
-        type: Date,
-        default: Date.now,
-    },
-    });
-
-    ReporteSchema.index({ location: "2dsphere" });
-=======
 const ReporteSchema = new mongoose.Schema(
   {
     location: {
@@ -121,7 +88,6 @@ ReporteSchema.index({ gravedad_objetiva: 1, estado: 1 });
 ReporteSchema.index({ fechaReporte: -1 });
 ReporteSchema.index({ usuario: 1 });
 ReporteSchema.index({ anonimo: 1 });
->>>>>>> prueba-vivi-lu
 
     const Reporte = mongoose.model("Reporte", ReporteSchema);
     export default Reporte;

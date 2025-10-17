@@ -34,5 +34,5 @@ alertaAcosoSchema.index({ location: "2dsphere" });
 alertaAcosoSchema.index({ fechaAlerta: -1 });
 alertaAcosoSchema.index({ activa: 1 });
 
-const AlertaAcoso = mongoose.model("AlertaAcoso", alertaAcosoSchema);
+const AlertaAcoso = mongoose.models.AlertaAcoso || mongoose.model("AlertaAcoso", alertaAcosoSchema);
 export default AlertaAcoso;
