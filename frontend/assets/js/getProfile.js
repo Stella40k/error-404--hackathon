@@ -49,15 +49,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
 
     if (response.user) {
-      // Poblar el menú desplegable
-      if (dropdownUsername && dropdownEmail) {
-        dropdownUsername.innerText = response.user.username;
-        dropdownEmail.innerText = response.user.email;
-      }
-      // Poblar la barra lateral
-      if (sidebarUsername) {
-        sidebarUsername.innerText = response.user.username;
-      }
+      if (dropdownUsername) dropdownUsername.innerText = response.user.username;
+      if (dropdownEmail) dropdownEmail.innerText = response.user.email;
+      if (sidebarUsername) sidebarUsername.innerText = response.user.username;
     }
   } catch (error) {
     console.error("Error al obtener el perfil:", error.message);
