@@ -26,7 +26,7 @@
         --color-text-dark: #1b2a19;
         
         /* Colores para estados de reportes */
-        --color-sin-atender: #facc15; /* yellow-400 */
+        --color-sin-atender: #facc15; /* yellow-400 (reemplaza pendiente) */
         --color-en-proceso: #3b82f6; /* blue-500 */
         --color-resuelto: #10b981; /* emerald-500 */
         
@@ -61,59 +61,28 @@
       .compact-table th:last-child, .compact-table td:last-child {
         padding-right: 1.5rem; /* px-6 */
       }
-      /* Clase CSS para ocultar filas de la tabla (para el filtro JS) */
+      /* Clase CSS para ocultar filas de la tabla */
       .hidden-row {
         display: none;
-      }
-      .subcategory-panel {
-        transition: all 0.3s ease-in-out;
-      }
-      .subcategory-panel::-webkit-scrollbar {
-        width: 6px;
-      }
-      .subcategory-panel::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 10px;
-      }
-      .subcategory-panel::-webkit-scrollbar-thumb {
-        background: #ccc;
-        border-radius: 10px;
-      }
-      .subcategory-panel::-webkit-scrollbar-thumb:hover {
-        background: #aaa;
-      }
-      .modal-overlay {
-        background-color: rgba(0, 0, 0, 0.5);
       }
     </style>
   </head>
 
   <body class="bg-gray-50">
-    <nav class="bg-white border-b border-gray-200">
-        <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex-shrink-0">
-                    <img src="assets/images/municipalidad-logo.png" alt="Logo de la Municipalidad" class="h-8"/>
-                </div>
-                <div class="flex-shrink-0">
-                    <img src="assets/images/UrbiVox-Reportes-Ciudadanos-Largo.png" alt="UrbiVox - Reportes Ciudadanos" class="h-6"/>
-                </div>
-            </div>
-        </div>
-    </nav>
-    <div class="flex flex-grow overflow-hidden">
+    <div class="flex h-screen">
       <aside
-        class="w-64 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col h-full"
+        class="w-64 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col"
       >
-      <div class="h-16 flex items-center px-4 border-b border-gray-200 hidden">
-            <div>
-              <img src="/frontend/assets/images/Urbi.png" alt="Logo de UrbiVox" class="h-6"/>
+        <div class="h-16 flex items-center px-4 border-b border-gray-200">
+          <div>
+              <img src="assets/images/Urbi.png" alt="Logo de UrbiVox" class="h-6"/>
           </div>
           <div class="ml-3">
+            
             <h2 class="text-md font-bold" style="color: var(--color-text-dark)">
               UrbiVox
             </h2>
-            <p class="text-xs text-gray-500">Reportes Ciudadanos</p>
+            <p class="text-xs text-gray-500">Panel Municipal</p>
           </div>
         </div>
         <div class="flex-grow flex flex-col justify-between p-4">
@@ -131,7 +100,6 @@
                   color: var(--color-primary);
                 "
               >
-              
                 <i class="ph-fill ph-house text-lg"></i>
                 <span>Inicio</span>
               </a>
@@ -149,18 +117,10 @@
                 <i class="ph ph-map-pin-line text-lg"></i>
                 <span>Mapa de Incidencias</span>
               </a>
-              </nav>
+            </nav>
           </div>
           <div class="space-y-2">
-            
-              <div class="px-4 py-3 border-t border-gray-200 mt-auto">
-                <img 
-                    src="/frontend/assets/images/UrbiVox.png" 
-                    alt="UrbiVox - Reportes Ciudadanos" 
-                    class="h-8 w-auto mx-auto opacity-75" 
-                />
-            </div>
-              <div
+            <div
               id="sidebar-profile"
               class="flex items-center space-x-2 px-4 py-2.5 border-t border-gray-200 pt-4"
             >
@@ -246,7 +206,7 @@
             <div class="relative z-10">
               <span
                 class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full"
-                >INICIO</span
+                >Panel</span
               >
               <h1 class="text-4xl md:text-4xl font-bold mt-4 max-w-lg">
                 Visión general de los reportes ciudadanos
@@ -511,122 +471,33 @@
             const filterDropdown = document.getElementById('category-filter');
             const reportRows = document.querySelectorAll('.report-row');
 
-            // 1. Lógica de Filtrado de la Tabla
+            // Función principal para filtrar la tabla
             const applyFilter = () => {
                 const selectedCategory = filterDropdown.value;
 
                 reportRows.forEach(row => {
+                    // Ocultar todas las filas primero
                     row.classList.add('hidden-row');
 
+                    // Mostrar si se selecciona "Todas las Categorías" (all)
                     if (selectedCategory === 'all') {
                         row.classList.remove('hidden-row');
                         return;
                     }
 
+                    // Mostrar si la fila tiene la clase de la categoría seleccionada
+                    // La clase en la fila es 'category-' + el valor del select
                     if (row.classList.contains(`category-${selectedCategory}`)) {
                         row.classList.remove('hidden-row');
                     }
                 });
             };
+
+            // Ejecutar el filtro cada vez que cambia el valor del desplegable
             filterDropdown.addEventListener('change', applyFilter);
-            
-            // 2. Lógica para mostrar/ocultar subcategorías
-            document.querySelectorAll('[id^="toggle-button-"]').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    const panelId = event.currentTarget.id.replace('toggle-button', 'subcategory-panel');
-                    const panel = document.getElementById(panelId);
-                    const icon = event.currentTarget.querySelector('.ph-caret-down');
 
-                    if (panel) {
-                        panel.classList.toggle('hidden');
-                        icon.classList.toggle('rotate-180');
-                    }
-                });
-            });
-
-            // 3. Lógica para el Modal (Abriendo y Cerrando)
-            // Se mantiene el código, aunque el modal no está presente en el HTML actual.
-            const openModalButton = document.getElementById('open-report-modal');
-            const closeModalButton = document.getElementById('close-report-modal');
-            const cancelReportButton = document.getElementById('cancel-report-button');
-            const reportModal = document.getElementById('report-modal');
-
-            if (openModalButton) {
-                openModalButton.addEventListener('click', () => {
-                    reportModal.classList.remove('hidden');
-                });
-            }
-
-            const hideModal = () => {
-                if(reportModal) reportModal.classList.add('hidden');
-            };
-
-            if (closeModalButton) {
-                closeModalButton.addEventListener('click', hideModal);
-            }
-            if (cancelReportButton) {
-                cancelReportButton.addEventListener('click', hideModal);
-            }
-            if (reportModal) {
-                 reportModal.addEventListener('click', (e) => {
-                    if (e.target === reportModal) {
-                        hideModal();
-                    }
-                });
-            }
-
-
-            // 4. Lógica para Subcategorías en el Modal
-            // Se mantiene el código, aunque el modal no está presente en el HTML actual.
-            const categorySelect = document.getElementById('category-select');
-            const subcategoryContainer = document.getElementById('subcategory-container');
-            const subcategorySelect = document.getElementById('subcategory-select');
-
-            const subcategories = {
-                'delito': [
-                    { value: 'robo-violencia', text: 'Robo con Violencia (Atraco)' },
-                    { value: 'hurto', text: 'Hurto (Robo sin violencia)' },
-                    { value: 'vandalismo', text: 'Vandalismo y Daño' }
-                ],
-                'violencia': [
-                    { value: 'acoso', text: 'Acoso / Hostigamiento' },
-                    { value: 'pelea', text: 'Pelea o Agresión' },
-                    { value: 'violencia-genero', text: 'Violencia de Género (Urgente)' }
-                ],
-                'transito': [
-                    { value: 'accidente', text: 'Accidente Vial' },
-                    { value: 'conduccion-peligrosa', text: 'Conducción Peligrosa' },
-                    { value: 'obstruccion', text: 'Obstrucción / Peligro Vial' }
-                ],
-                'infraestructura': [
-                    { value: 'mala-iluminacion', text: 'Mala Iluminación' },
-                    { value: 'via-mal-estado', text: 'Vía Pública en Mal Estado (Baches)' }
-                ]
-            };
-            if (categorySelect) {
-              categorySelect.addEventListener('change', (e) => {
-                  const selectedCategory = e.target.value;
-                  subcategorySelect.innerHTML = ''; 
-
-                  if (selectedCategory && subcategories[selectedCategory]) {
-                      subcategoryContainer.classList.remove('hidden');
-                      const defaultOption = document.createElement('option');
-                      defaultOption.value = '';
-                      defaultOption.text = 'Selecciona una subcategoría';
-                      subcategorySelect.appendChild(defaultOption);
-
-                      subcategories[selectedCategory].forEach(sub => {
-                          const option = document.createElement('option');
-                          option.value = sub.value;
-                          option.text = sub.text;
-                          subcategorySelect.appendChild(option);
-                      });
-                  } else {
-                      subcategoryContainer.classList.add('hidden');
-                  }
-              });
-            }
-
+            // Opcional: Ejecutar el filtro al cargar para asegurar el estado inicial
+            // applyFilter(); 
         });
     </script>
     <script src="/assets/js/getProfile.js"></script>
