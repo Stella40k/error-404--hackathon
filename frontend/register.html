@@ -1,55 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="assets/js/publicRoutes.js"></script>
-    <title>HTML - Register</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>UrbiVox - Registro</title>
+    <style>
+      /* Estilos para coherencia visual con home.html y configuration.html */
+      :root {
+        --color-primary: #6cb52d; /* Verde Lima - Principal */
+        --color-accent: #164a41; /* Verde Oscuro - Acento */
+        --color-text-dark: #1b2a19;
+        font-family: "Poppins", sans-serif;
+      }
+      .focus-ring {
+        --tw-ring-color: var(--color-accent) !important;
+      }
+    </style>
   </head>
 
-  <body>
-    <main class="h-screen bg-[#05212a] flex justify-center items-center">
+  <body class="bg-gray-50">
+    <main class="h-screen flex justify-center items-center">
       <form
-        class="bg-white flex flex-col rounded-lg p-5 gap-2"
+        class="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 flex flex-col gap-6 border border-gray-200"
         onsubmit="register(event)"
       >
-        <h1 class="text-2xl font-bold">Register</h1>
-        <div class="grid grid-cols-2 gap-2">
-          <input
-            type="text"
-            placeholder="username"
-            id="username"
-            class="border border-gray-300 rounded-sm h-[50px] w-[250px] p-2 outline-blue-300 col-span-2"
-            required
-          />
-
-          <input
-            type="email"
-            placeholder="email"
-            id="email"
-            class="border border-gray-300 rounded-sm h-[50px] w-[250px] p-2 outline-blue-300 col-span-2"
-            required
-          />
-
-          <input
-            type="password"
-            placeholder="password"
-            id="password"
-            class="border border-gray-300 rounded-sm h-[50px] p-2 outline-blue-300 col-span-2"
-            required
-          />
+        <div class="text-center">
+          <div
+            class="inline-block h-10 w-10 rounded-lg flex items-center justify-center mx-auto"
+            style="background-color: var(--color-accent)"
+          >
+            <i class="ph ph-triangle text-white text-xl font-bold"></i>
+          </div>
+          <h1
+            class="text-3xl font-bold mt-3"
+            style="color: var(--color-text-dark)"
+          >
+            Registro de Usuario
+          </h1>
+          <p class="text-gray-500 text-sm mt-1">
+            Únete a UrbiVox para reportar y participar.
+          </p>
         </div>
+
+        <div class="space-y-4">
+          <div>
+            <label for="username" class="text-sm font-semibold text-gray-700"
+              >Usuario</label
+            >
+            <input
+              type="text"
+              placeholder="Nombre de usuario"
+              id="username"
+              class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus-ring"
+              required
+              style="--tw-ring-color: var(--color-accent)"
+            />
+          </div>
+
+          <div>
+            <label for="email" class="text-sm font-semibold text-gray-700"
+              >Email</label
+            >
+            <input
+              type="email"
+              placeholder="Correo electrónico"
+              id="email"
+              class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus-ring"
+              required
+              style="--tw-ring-color: var(--color-accent)"
+            />
+          </div>
+
+          <div>
+            <label for="password" class="text-sm font-semibold text-gray-700"
+              >Contraseña</label
+            >
+            <input
+              type="password"
+              placeholder="Contraseña"
+              id="password"
+              class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus-ring"
+              required
+              style="--tw-ring-color: var(--color-accent)"
+            />
+          </div>
+
+          <div>
+            <label for="role" class="block text-sm font-semibold text-gray-700"
+              >Tipo de Cuenta</label
+            >
+            <div class="relative mt-1">
+              <select
+                id="role"
+                name="role"
+                class="block w-full py-3 px-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus-ring sm:text-sm appearance-none"
+                required
+                style="--tw-ring-color: var(--color-accent)"
+              >
+                <option value="User">Ciudadano (User)</option>
+                <option value="Autoridades">
+                  Autoridades (Solo acceso municipal)
+                </option>
+              </select>
+              <div
+                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500"
+              >
+                <i class="ph ph-caret-down"></i>
+              </div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">
+              Selecciona tu rol. Los usuarios normales deben seleccionar
+              "Ciudadano (User)".
+            </p>
+          </div>
+          </div>
+
         <button
           type="submit"
-          class="bg-blue-500 text-white rounded-sm h-[50px] font-semibold outline-blue-300"
+          class="text-white rounded-lg h-[50px] font-semibold transition-colors hover:opacity-90"
+          style="background-color: var(--color-primary)"
         >
-          Register
+          Registrarse
         </button>
         <div class="text-center">
-          <span
-            >O,
-            <a href="index.html" class="text-blue-600">inicia sesion</a></span
+          <span class="text-gray-600"
+            >¿Ya tienes cuenta?
+            <a
+              href="index.html"
+              class="font-semibold"
+              style="color: var(--color-accent)"
+              >Inicia sesión</a
+            ></span
           >
         </div>
       </form>

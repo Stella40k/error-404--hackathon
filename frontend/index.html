@@ -1,46 +1,105 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="assets/js/publicRoutes.js"></script>
-    <title>HTML - Login</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>UrbiVox - Login</title>
+    <style>
+      /* Estilos para coherencia visual con home.html y configuration.html */
+      :root {
+        --color-primary: #6cb52d; /* Verde Lima - Principal */
+        --color-accent: #164a41; /* Verde Oscuro - Acento */
+        --color-text-dark: #1b2a19;
+        font-family: "Poppins", sans-serif;
+      }
+      .focus-ring {
+        --tw-ring-color: var(--color-accent) !important;
+      }
+    </style>
   </head>
 
-  <body>
-    <main class="h-screen bg-[#05212a] flex justify-center items-center">
+  <body class="bg-gray-50">
+    <main class="h-screen flex justify-center items-center">
       <form
-        class="bg-white flex flex-col rounded-lg p-5 gap-2"
+        class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-8 flex flex-col gap-6 border border-gray-200"
         onsubmit="login(event)"
       >
-        <h1 class="text-2xl font-bold">Log in</h1>
+        <div class="text-center">
+          <div
+            class="inline-block h-10 w-10 rounded-lg flex items-center justify-center mx-auto"
+            style="background-color: var(--color-accent)"
+          >
+            <i class="ph ph-triangle text-white text-xl font-bold"></i>
+          </div>
+          <h1
+            class="text-3xl font-bold mt-3"
+            style="color: var(--color-text-dark)"
+          >
+            Iniciar Sesión
+          </h1>
+          <p class="text-gray-500 text-sm mt-1">
+            Ingresa tus credenciales para acceder a UrbiVox.
+          </p>
+        </div>
 
-        <input
-          type="text"
-          placeholder="username"
-          id="username"
-          class="border border-gray-300 rounded-sm h-[50px] w-[250px] p-2 outline-blue-300"
-          required
-        />
+        <div>
+          <label for="username" class="text-sm font-semibold text-gray-700"
+            >Usuario</label
+          >
+          <input
+            type="text"
+            placeholder="Nombre de usuario"
+            id="username"
+            class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus-ring"
+            required
+            style="--tw-ring-color: var(--color-accent)"
+          />
+        </div>
 
-        <input
-          type="password"
-          placeholder="password"
-          id="password"
-          class="border border-gray-300 rounded-sm h-[50px] w-[250px] p-2 outline-blue-300"
-          required
-        />
+        <div>
+          <label for="password" class="text-sm font-semibold text-gray-700"
+            >Contraseña</label
+          >
+          <input
+            type="password"
+            placeholder="Contraseña"
+            id="password"
+            class="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus-ring"
+            required
+            style="--tw-ring-color: var(--color-accent)"
+          />
+        </div>
 
         <button
-          class="bg-blue-500 text-white rounded-sm h-[50px] font-semibold outline-blue-300"
+          type="submit"
+          class="text-white rounded-lg h-[50px] font-semibold transition-colors hover:opacity-90"
+          style="background-color: var(--color-primary)"
         >
-          Log in
+          Acceder
         </button>
         <div class="text-center">
-          <span
-            >O,
-            <a href="register.html" class="text-blue-600">registrate</a></span
+          <span class="text-gray-600"
+            >¿No tienes cuenta?
+            <a
+              href="register.html"
+              class="font-semibold"
+              style="color: var(--color-accent)"
+              >Regístrate aquí</a
+            ></span
           >
         </div>
       </form>
