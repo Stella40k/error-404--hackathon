@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- <script src="assets/js/privateRoutes.js"></script> -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+    />
+    <title>HTML - Login</title>
+</head>
+<body>
+   <main class="h-screen bg-[#05212a]">
+    <nav class="bg-slate-950 flex justify-between p-4">
+      <div>
+        <a href="home.html" class="text-2xl font-bold text-white">
+          TasksApp
+        </a>
+        <a href="home.html" class="text-md text-white">
+          All Tasks
+        </a>
+        <a href="mytasks.html" class="text-md text-white">
+          My Tasks
+        </a>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <div class="flex justify-center items-center text-white gap-2">
+          <div class="border rounded-full h-8 w-8 flex justify-center items-center">
+            <i class="ph ph-user text-xl"></i>
+          </div>
+          <span id="user-profile"></span>
+        </div>
+        <div
+          id="logout"
+          class="flex justify-center items-center gap-1 cursor-pointer p-2 hover:bg-red-600 rounded-md transition-all duration-200"
+        >
+          <i class="ph ph-sign-out text-xl text-white"></i>
+        </div>
+      </div>
+    </nav>
+
+     <div class="flex flex-col justify-center container mx-auto">
+       <div class="flex justify-between m-3">
+          <h1 class="text-3xl font-bold text-white">My tasks</h1>
+          <a
+            href="newTask.html"
+            role="button"
+            class="bg-blue-600 text-white px-4 py-2 rounded-lg"
+          >
+            Crear Tarea
+          </a>
+        </div>
+        <div id="tasks-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        </div>
+      </div>
+
+   </main> 
+
+   <script src="assets/js/getProfile.js"></script>
+   <script src="assets/js/mytasks.js"></script>
+   <script src="assets/js/logOut.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="assets/js/publicRoutes.js"></script>
+    <title>HTML - Register</title>
+  </head>
+
+  <body>
+    <main class="h-screen bg-[#05212a] flex justify-center items-center">
+      <form
+        class="bg-white flex flex-col rounded-lg p-5 gap-2"
+        onsubmit="register(event)"
+      >
+        <h1 class="text-2xl font-bold">Register</h1>
+        <div class="grid grid-cols-2 gap-2">
+          <input
+            type="text"
+            placeholder="username"
+            id="username"
+            class="border border-gray-300 rounded-sm h-[50px] w-[250px] p-2 outline-blue-300 col-span-2"
+            required
+          />
+
+          <input
+            type="email"
+            placeholder="email"
+            id="email"
+            class="border border-gray-300 rounded-sm h-[50px] w-[250px] p-2 outline-blue-300 col-span-2"
+            required
+          />
+
+          <input
+            type="password"
+            placeholder="password"
+            id="password"
+            class="border border-gray-300 rounded-sm h-[50px] p-2 outline-blue-300 col-span-2"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          class="bg-blue-500 text-white rounded-sm h-[50px] font-semibold outline-blue-300"
+        >
+          Register
+        </button>
+        <div class="text-center">
+          <span
+            >O,
+            <a href="index.html" class="text-blue-600">inicia sesion</a></span
+          >
+        </div>
+      </form>
+    </main>
+
+    <script src="assets/js/register.js"></script>
+  </body>
+</html>
