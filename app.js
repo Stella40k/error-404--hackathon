@@ -1,5 +1,3 @@
-// app.js
-
 import express from "express";
 import "dotenv/config";
 import cors from "cors";
@@ -15,6 +13,8 @@ import { connectDB } from "./src/config/database.js";
 import authRoutes from "./src/routes/auth.routes.js";
 import taskRoutes from "./src/routes/task.routes.js";
 import reporteRoutes from "./src/routes/reporteRoutes.js";
+import categoriaRoutes from "./src/routes/categoriaRoutes.js";
+import incidenteRoutes from "./src/routes/incidenteRoutes.js";
 import userRoutes from "./src/routes/user.routes.js";
 import statsRoutes from "./src/routes/stats.route.js";
 import alertasRoutes from "./src/routes/alertas.route.js";
@@ -38,6 +38,8 @@ app.use(express.static(path.join(__dirname, "frontend")));
 app.use("/api", authRoutes);
 app.use("/api", taskRoutes);
 app.use("/api", reporteRoutes);
+app.use("/api", categoriaRoutes);
+app.use("/api", incidenteRoutes);
 app.use("/api", userRoutes);
 app.use("/api", statsRoutes); // ← Tu ruta de stats
 app.use("/api", alertasRoutes);

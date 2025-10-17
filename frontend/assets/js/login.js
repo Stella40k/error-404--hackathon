@@ -4,7 +4,6 @@ const login = async (event) => {
   const password = document.getElementById("password").value;
   try {
     const req = await fetch("/api/login", {
-      // RUTA ACTUALIZADA
       method: "POST",
       body: JSON.stringify({ username, password }),
       headers: { "Content-type": "application/json" },
@@ -13,12 +12,12 @@ const login = async (event) => {
     if (req.ok) {
       alert(res.message);
       localStorage.setItem("token", res.token);
-      window.location.replace("/home.html"); // URL relativa
+      window.location.replace("/home.html");
     } else {
       alert(res.message);
     }
   } catch (error) {
     console.log(error);
-    alert("Ocurrio un error al iniciar sesion");
+    alert("Ocurrió un error al iniciar sesión");
   }
 };

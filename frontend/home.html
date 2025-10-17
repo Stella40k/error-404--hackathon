@@ -1,63 +1,611 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- <script src="assets/js/privateRoutes.js"></script> -->
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UrbiVox - Reportes Ciudadanos</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
     <link
       rel="stylesheet"
       type="text/css"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
     />
-    <title>HTML - Login</title>
-</head>
-<body>
-   <main class="h-screen bg-[#05212a]">
-    <nav class="bg-slate-950 flex justify-between p-4">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/style/home.css" />
 
-      <div>
-        <a href="home.html" class="text-2xl font-bold text-white">
-          TasksApp
-        </a>
-        <a href="home.html" class="text-md text-white">
-          All Tasks
-        </a>
-        <a href="mytasks.html" class="text-md text-white">
-          My Tasks
-        </a>
-      </div>
+    <style>
+      :root {
+        --color-primary: #6cb52d;
+        --color-accent: #164a41;
+        --color-text-dark: #1b2a19;
+        font-family: "Poppins", sans-serif;
+      }
+      .ring-accent {
+        --tw-ring-color: var(--color-accent);
+      }
+      .subcategory-panel {
+        transition: all 0.3s ease-in-out;
+      }
+      .subcategory-panel::-webkit-scrollbar {
+        width: 6px;
+      }
+      .subcategory-panel::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      .subcategory-panel::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 10px;
+      }
+      .subcategory-panel::-webkit-scrollbar-thumb:hover {
+        background: #aaa;
+      }
+      .modal-overlay {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+    </style>
+  </head>
 
-      <div class="flex flex-wrap gap-2">
-        <div class="flex justify-center items-center text-white gap-2">
-          <div class="border rounded-full h-8 w-8 flex justify-center items-center">
-            <i class="ph ph-user text-xl"></i>
+  <body class="bg-gray-50">
+    <div class="flex h-screen">
+      <aside
+        class="w-64 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col"
+      >
+        <div class="h-16 flex items-center px-4 border-b border-gray-200">
+          <div
+            class="h-8 w-8 rounded-md flex items-center justify-center"
+            style="background-color: var(--color-accent)"
+          >
+            <i class="ph ph-triangle text-white text-lg font-bold"></i>
           </div>
-          <span id="user-profile"></span>
+          <div class="ml-3">
+            <h2 class="text-md font-bold" style="color: var(--color-text-dark)">
+              UrbiVox
+            </h2>
+            <p class="text-xs text-gray-500">Reportes Ciudadanos</p>
+          </div>
         </div>
-        <div
-          id="logout"
-          class="flex justify-center items-center gap-1 cursor-pointer p-2 hover:bg-red-600 rounded-md transition-all duration-200"
+        <div class="flex-grow flex flex-col justify-between p-4">
+          <div>
+            <nav class="flex flex-col space-y-2">
+              <a
+                href="/home.html"
+                class="flex items-center space-x-3 px-4 py-2.5 font-semibold rounded-lg"
+                style="
+                  background-color: color-mix(
+                    in srgb,
+                    var(--color-accent) 20%,
+                    transparent
+                  );
+                  color: var(--color-primary);
+                "
+              >
+                <i class="ph-fill ph-house text-lg"></i>
+                <span>Inicio</span>
+              </a>
+              <a
+                href="/comunidad.html"
+                class="flex items-center space-x-3 px-4 py-2.5 text-gray-600 hover:bg-gray-100 font-semibold rounded-lg"
+              >
+                <i class="ph ph-users text-lg"></i>
+                <span>Comunidad</span>
+              </a>
+            </nav>
+          </div>
+          <div class="space-y-2">
+            <div
+              id="sidebar-profile"
+              class="flex items-center space-x-2 px-4 py-2.5 border-t border-gray-200 pt-4"
+            >
+              <div
+                class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"
+              >
+                <i class="ph ph-user text-lg text-gray-600"></i>
+              </div>
+              <span
+                id="sidebar-user-profile-name"
+                class="font-semibold text-sm truncate"
+                style="color: var(--color-text-dark)"
+              ></span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+          <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+              <div class="flex items-center space-x-4">
+                <button class="text-gray-600 hover:text-gray-900">
+                  <i class="ph ph-list text-2xl"></i>
+                </button>
+                <h1
+                  class="text-xl font-bold"
+                  style="color: var(--color-text-dark)"
+                >
+                  UrbiVox
+                </h1>
+              </div>
+              <div class="flex items-center space-x-5">
+                <a href="#" class="text-gray-600 hover:text-gray-900"
+                  ><i class="ph ph-map-pin text-2xl"></i
+                ></a>
+                <a href="#" class="text-gray-600 hover:text-gray-900"
+                  ><i class="ph ph-bell text-2xl"></i
+                ></a>
+                <div class="relative ml-4">
+                  <button
+                    id="user-profile-button"
+                    class="flex items-center space-x-2 focus:outline-none"
+                  >
+                    <div
+                      class="h-9 w-9 rounded-full bg-gray-200 ring-2 ring-offset-2 ring-accent flex items-center justify-center"
+                    >
+                      <i class="ph ph-user text-xl text-gray-600"></i>
+                    </div>
+                  </button>
+                  <div
+                    id="profile-dropdown"
+                    class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border z-50"
+                  >
+                    <div class="px-4 py-3 border-b">
+                      <p
+                        id="dropdown-username"
+                        class="font-semibold text-sm truncate"
+                        style="color: var(--color-text-dark)"
+                      ></p>
+                      <p
+                        id="dropdown-email"
+                        class="text-xs text-gray-500 truncate"
+                      ></p>
+                    </div>
+                    <div class="py-1">
+                      <a
+                        href="/configuration.html"
+                        class="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <i class="ph ph-gear text-lg"></i>
+                        <span>Configuración</span>
+                      </a>
+                    </div>
+                    <div class="py-1 border-t">
+                      <button
+                        id="logout-button"
+                        class="w-full text-left flex items-center space-x-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        <i class="ph ph-sign-out text-lg"></i>
+                        <span>Cerrar Sesión</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="flex-1 p-6 lg:p-8">
+          <section
+            class="relative gradient-card text-white rounded-2xl p-8 md:p-12 overflow-hidden"
+          >
+            <div class="relative z-10">
+              <span
+                class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full"
+                >Plataforma Ciudadana</span
+              >
+              <h1 class="text-4xl md:text-4xl font-bold mt-4 max-w-lg">
+                Mejora tu Ciudad con tus Reportes
+              </h1>
+              <p
+                class="mt-4 max-w-xl"
+                style="color: var(--color-bg); opacity: 0.9"
+              >
+                Reporta problemas de infraestructura en tu comunidad y ayuda a
+                las autoridades a priorizar las reparaciones necesarias.
+              </p>
+              <button
+                id="open-report-modal"
+                class="inline-flex items-center space-x-2 bg-white font-bold px-6 py-3 rounded-lg mt-8 hover:bg-gray-200 transition-colors"
+                style="color: var(--color-primary)"
+              >
+                <i class="ph ph-plus-circle text-xl"></i>
+                <span>Crear Reporte</span>
+              </button>
+            </div>
+            <div class="concentric-circles hidden md:block">
+              <div class="circle-inner-1"></div>
+              <div class="circle-inner-2"></div>
+            </div>
+          </section>
+
+          <section class="mt-12">
+            <h2
+              class="text-2xl font-bold mb-6"
+              style="color: var(--color-text-dark)"
+            >
+              Categorías
+            </h2>
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start"
+            >
+              <div
+                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
+              >
+                <div class="flex justify-between items-start">
+                  <div class="bg-red-100 p-2 rounded-lg">
+                    <i class="ph ph-shield-warning text-2xl text-red-600"></i>
+                  </div>
+                  <span
+                    class="text-sm font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md"
+                    >156</span
+                  >
+                </div>
+                <h3
+                  class="font-bold text-lg mt-4"
+                  style="color: var(--color-text-dark)"
+                >
+                  Delito / Robo
+                </h3>
+                <p class="text-sm text-gray-500 mt-1 mb-4">
+                  Reportar robos, hurtos y vandalismo.
+                </p>
+                <button
+                  id="toggle-button-1"
+                  class="w-full flex justify-between items-center text-left bg-gray-50 p-3 rounded-lg hover:bg-gray-100"
+                >
+                  <span class="font-semibold text-sm">Ver Subcategorías</span
+                  ><i class="ph ph-caret-down transition-transform"></i>
+                </button>
+                <div
+                  id="subcategory-panel-1"
+                  class="hidden subcategory-panel mt-4 space-y-3 max-h-48 overflow-y-auto pr-2"
+                >
+                  <div class="bg-gray-100 p-3 rounded-lg">
+                    <h4 class="font-semibold text-sm">Robo con Violencia</h4>
+                    <p class="text-xs text-gray-500">Atraco, a mano armada</p>
+                  </div>
+                  <div class="bg-gray-100 p-3 rounded-lg">
+                    <h4 class="font-semibold text-sm">Hurto</h4>
+                    <p class="text-xs text-gray-500">
+                      Robo sin violencia, de vehículo/pertenencias estacionadas
+                    </p>
+                  </div>
+                  <div class="bg-gray-100 p-3 rounded-lg">
+                    <h4 class="font-semibold text-sm">Vandalismo y Daño</h4>
+                    <p class="text-xs text-gray-500">
+                      Rotura de propiedad pública/privada, Graffiti
+                    </p>
+                  </div>
+                  <div class="bg-gray-100 p-3 rounded-lg">
+                    <h4 class="font-semibold text-sm">
+                      Venta / Tráfico Ilegal
+                    </h4>
+                    <p class="text-xs text-gray-500">
+                      Presencia de venta de estupefacientes o contrabando
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
+              >
+                <div class="flex justify-between items-start">
+                  <div class="bg-purple-100 p-2 rounded-lg">
+                    <i
+                      class="ph ph-warning-octagon text-2xl text-purple-600"
+                    ></i>
+                  </div>
+                  <span
+                    class="text-sm font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md"
+                    >89</span
+                  >
+                </div>
+                <h3
+                  class="font-bold text-lg mt-4"
+                  style="color: var(--color-text-dark)"
+                >
+                  Violencia / Acoso
+                </h3>
+                <p class="text-sm text-gray-500 mt-1 mb-4">
+                  Reportar situaciones de violencia y acoso.
+                </p>
+                <button
+                  id="toggle-button-2"
+                  class="w-full flex justify-between items-center text-left bg-gray-50 p-3 rounded-lg hover:bg-gray-100"
+                >
+                  <span class="font-semibold text-sm">Ver Subcategorías</span
+                  ><i class="ph ph-caret-down transition-transform"></i>
+                </button>
+                <div
+                  id="subcategory-panel-2"
+                  class="hidden subcategory-panel mt-4 space-y-3 max-h-48 overflow-y-auto pr-2"
+                >
+                  <div class="bg-gray-100 p-3 rounded-lg">
+                    <h4 class="font-semibold text-sm">Acoso / Hostigamiento</h4>
+                    <p class="text-xs text-gray-500">
+                      Verbal, Seguimiento, Conducta sospechosa
+                    </p>
+                  </div>
+                  <div class="bg-gray-100 p-3 rounded-lg">
+                    <h4 class="font-semibold text-sm">Pelea o Agresión</h4>
+                    <p class="text-xs text-gray-500">
+                      Disturbios en la vía pública, Conflicto vecinal escalado
+                    </p>
+                  </div>
+                  <div class="bg-gray-100 p-3 rounded-lg">
+                    <h4 class="font-semibold text-sm">
+                      Situación de Violencia de Género
+                    </h4>
+                    <p class="text-xs text-gray-500">
+                      Requiere máxima prioridad
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
+              >
+                <div class="flex justify-between items-start">
+                  <div class="bg-orange-100 p-2 rounded-lg">
+                    <i class="ph ph-car text-2xl text-orange-600"></i>
+                  </div>
+                  <span
+                    class="text-sm font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md"
+                    >124</span
+                  >
+                </div>
+                <h3
+                  class="font-bold text-lg mt-4"
+                  style="color: var(--color-text-dark)"
+                >
+                  Tránsito / Vía Pública
+                </h3>
+                <p class="text-sm text-gray-500 mt-1 mb-4">
+                  Reportar problemas de tránsito y vía pública.
+                </p>
+                <button
+                  id="toggle-button-3"
+                  class="w-full flex justify-between items-center text-left bg-gray-50 p-3 rounded-lg hover:bg-gray-100"
+                >
+                  <span class="font-semibold text-sm">Ver Subcategorías</span
+                  ><i class="ph ph-caret-down transition-transform"></i>
+                </button>
+                <div
+                  id="subcategory-panel-3"
+                  class="hidden subcategory-panel mt-4 space-y-3 max-h-48 overflow-y-auto pr-2"
+                >
+                  <div class="bg-gray-100 p-3 rounded-lg">
+                    <h4 class="font-semibold text-sm">Accidente Vial</h4>
+                    <p class="text-xs text-gray-500">
+                      Colisión, Choque con lesiones
+                    </p>
+                  </div>
+                  <div class="bg-gray-100 p-3 rounded-lg">
+                    <h4 class="font-semibold text-sm">Conducción Peligrosa</h4>
+                    <p class="text-xs text-gray-500">
+                      Picadas, Exceso de velocidad, Maniobras imprudentes
+                    </p>
+                  </div>
+                  <div class="bg-gray-100 p-3 rounded-lg">
+                    <h4 class="font-semibold text-sm">
+                      Obstrucción / Peligro Vial
+                    </h4>
+                    <p class="text-xs text-gray-500">
+                      Vehículo abandonado, Objeto en la calle, Falta de
+                      señalización
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
+              >
+                <div class="flex justify-between items-start">
+                  <div class="bg-yellow-100 p-2 rounded-lg">
+                    <i class="ph ph-warning text-2xl text-yellow-600"></i>
+                  </div>
+                  <span
+                    class="text-sm font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md"
+                    >203</span
+                  >
+                </div>
+                <h3
+                  class="font-bold text-lg mt-4"
+                  style="color: var(--color-text-dark)"
+                >
+                  Infraestructura de Riesgo
+                </h3>
+                <p class="text-sm text-gray-500 mt-1 mb-4">
+                  Reportar problemas de infraestructura urbana.
+                </p>
+                <button
+                  id="toggle-button-4"
+                  class="w-full flex justify-between items-center text-left bg-gray-50 p-3 rounded-lg hover:bg-gray-100"
+                >
+                  <span class="font-semibold text-sm">Ver Subcategorías</span
+                  ><i class="ph ph-caret-down transition-transform"></i>
+                </button>
+                <div
+                  id="subcategory-panel-4"
+                  class="hidden subcategory-panel mt-4 space-y-3 max-h-48 overflow-y-auto pr-2"
+                >
+                  <div class="bg-gray-100 p-3 rounded-lg">
+                    <h4 class="font-semibold text-sm">Mala Iluminación</h4>
+                    <p class="text-xs text-gray-500">
+                      Foco roto, Calles oscuras
+                    </p>
+                  </div>
+                  <div class="bg-gray-100 p-3 rounded-lg">
+                    <h4 class="font-semibold text-sm">
+                      Vía Pública en Mal Estado
+                    </h4>
+                    <p class="text-xs text-gray-500">
+                      Baches peligrosos, Zanjas abiertas, Acera destrozada
+                    </p>
+                  </div>
+                  <div class="bg-gray-100 p-3 rounded-lg">
+                    <h4 class="font-semibold text-sm">Abandono Urbano</h4>
+                    <p class="text-xs text-gray-500">
+                      Lotes baldíos sin cercar, Basurales a cielo abierto
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="mt-12">
+            <div class="flex justify-between items-center mb-6">
+              <h2
+                class="text-2xl font-bold"
+                style="color: var(--color-text-dark)"
+              >
+                Reportes Recientes
+              </h2>
+              <a
+                href="#"
+                class="text-sm font-semibold text-blue-600 hover:underline"
+                >Ver todos</a
+              >
+            </div>
+            <div
+              id="reports-container"
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start"
+            ></div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <div
+      id="report-modal"
+      class="hidden fixed inset-0 flex items-center justify-center z-50 modal-overlay"
+    >
+      <div
+        class="bg-white rounded-xl shadow-lg w-full max-w-md mx-auto p-6 relative"
+      >
+        <button
+          id="close-report-modal"
+          class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
         >
-          <i class="ph ph-sign-out text-xl text-white"></i>
-        </div>
+          <i class="ph ph-x text-xl"></i>
+        </button>
+        <h3 class="text-xl font-bold" style="color: var(--color-text-dark)">
+          Crear Nuevo Reporte
+        </h3>
+        <p class="text-sm text-gray-500 mt-1">
+          Completa la información para reportar un problema.
+        </p>
+        <form id="report-form" class="mt-6 space-y-4">
+          <div>
+            <label
+              for="category-select"
+              class="block text-sm font-semibold text-gray-700"
+              >Categoría</label
+            >
+            <div class="relative mt-1">
+              <select
+                id="category-select"
+                name="categoria_principal"
+                class="block w-full py-2.5 px-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-accent focus:border-accent sm:text-sm appearance-none"
+                required
+              >
+                <option value="">Selecciona una categoría</option>
+                <option value="Delito / Robo">Delito / Robo</option>
+                <option value="Violencia / Acoso">Violencia / Acoso</option>
+                <option value="Tránsito / Vía Pública">
+                  Tránsito / Vía Pública
+                </option>
+                <option value="Infraestructura de Riesgo">
+                  Infraestructura de Riesgo
+                </option>
+              </select>
+              <div
+                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+              >
+                <i class="ph ph-caret-down"></i>
+              </div>
+            </div>
+          </div>
+          <div id="subcategory-container" class="hidden">
+            <label
+              for="subcategory-select"
+              class="block text-sm font-semibold text-gray-700"
+              >Subcategoría</label
+            >
+            <div class="relative mt-1">
+              <select
+                id="subcategory-select"
+                name="subcategoria"
+                class="block w-full py-2.5 px-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-accent focus:border-accent sm:text-sm appearance-none"
+                required
+              ></select>
+              <div
+                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+              >
+                <i class="ph ph-caret-down"></i>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label
+              for="report-description"
+              class="block text-sm font-semibold text-gray-700"
+              >Descripción</label
+            >
+            <textarea
+              id="report-description"
+              name="descripcion"
+              rows="4"
+              class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-accent focus:border-accent sm:text-sm p-3 resize-y"
+              placeholder="Describe el problema que quieres reportar..."
+              required
+            ></textarea>
+          </div>
+          <div class="flex items-center">
+            <input
+              id="anonimo-checkbox"
+              name="anonimo"
+              type="checkbox"
+              class="h-4 w-4 text-accent-600 focus:ring-accent-500 border-gray-300 rounded"
+            />
+            <label
+              for="anonimo-checkbox"
+              class="ml-2 block text-sm text-gray-900"
+              >Reportar como Anónimo</label
+            >
+          </div>
+          <div class="flex justify-end space-x-3 pt-4">
+            <button
+              type="button"
+              id="cancel-report-button"
+              class="px-5 py-2.5 rounded-lg text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors"
+              style="background-color: var(--color-primary)"
+            >
+              <i class="ph ph-plus-circle text-lg"></i>
+              <span>Crear Reporte</span>
+            </button>
+          </div>
+        </form>
       </div>
-    </nav>
+    </div>
 
-    
-    <div class="flex flex-col justify-center container mx-auto ">
-      <div class="flex justify-between m-3">
-        <h1 class="text-3xl font-bold text-white">All tasks</h1>
-      </div>
-        
-        <div id="tasks-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        </div>
-      </div>
-
-   </main> 
-
-   <script src="assets/js/getProfile.js"></script>
-   <script src="assets/js/tasks.js"></script>
-   <script src="assets/js/logOut.js"></script>
-</body>
+    <script src="/assets/js/getProfile.js"></script>
+    <script src="/assets/js/logOut.js"></script>
+    <script src="/assets/js/interactions.js"></script>
+    <script src="/assets/js/reports.js"></script>
+  </body>
 </html>
