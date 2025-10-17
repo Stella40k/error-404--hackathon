@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const alertaAcosoSchema = new mongoose.Schema({
+const AlertaAcosoSchema = new mongoose.Schema({
   location: {
     type: {
       type: String,
@@ -16,23 +16,10 @@ const alertaAcosoSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  tipo: {
-    type: String,
-    default: "acoso",
-    enum: ["acoso"]
-  },
-  activa: {
-    type: Boolean,
-    default: true
-  }
-}, {
-  timestamps: true,
 });
 
-// Índice 2dsphere obligatorio para consultas geográficas
-alertaAcosoSchema.index({ location: "2dsphere" });
-alertaAcosoSchema.index({ fechaAlerta: -1 });
-alertaAcosoSchema.index({ activa: 1 });
+// Índice geoespacial para consultas de ubicación
+AlertaAcosoSchema.index({ location: "2dsphere" });
 
-const AlertaAcoso = mongoose.models.AlertaAcoso || mongoose.model("AlertaAcoso", alertaAcosoSchema);
+const AlertaAcoso = mongoose.model("AlertaAcoso", AlertaAcosoSchema);
 export default AlertaAcoso;
