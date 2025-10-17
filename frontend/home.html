@@ -24,8 +24,6 @@
         --color-primary: #6cb52d;
         --color-accent: #164a41;
         --color-text-dark: #1b2a19;
-        --color-dark-blue: #262c5f;
-        --color-darkest: #181731;
         font-family: "Poppins", sans-serif;
       }
       .ring-accent {
@@ -34,7 +32,7 @@
     </style>
   </head>
 
-  <body style="background-color: var(--color-bg)">
+  <body class="bg-gray-50">
     <div class="flex h-screen">
       <aside
         class="w-64 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col"
@@ -55,17 +53,6 @@
         </div>
         <div class="flex-grow flex flex-col justify-between p-4">
           <div>
-            <div class="relative mb-4">
-              <i
-                class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              ></i>
-              <input
-                type="text"
-                placeholder="Buscar..."
-                class="w-full bg-gray-100 border-gray-200 rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2"
-                style="--tw-ring-color: var(--color-accent)"
-              />
-            </div>
             <nav class="flex flex-col space-y-2">
               <a
                 href="#"
@@ -85,17 +72,21 @@
             </nav>
           </div>
           <div class="space-y-2">
-            <a
-              href="/configuration.html"
-              class="flex items-center space-x-3 px-4 py-2.5 text-gray-600 hover:bg-gray-100 font-semibold rounded-lg"
-            >
-              <i class="ph ph-gear text-lg"></i>
-              <span>Configuración</span>
-            </a>
             <div
               id="sidebar-profile"
-              class="flex items-center space-x-3 px-4 py-2.5"
-            ></div>
+              class="flex items-center space-x-2 px-4 py-2.5 border-t border-gray-200 pt-4"
+            >
+              <div
+                class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"
+              >
+                <i class="ph ph-user text-lg text-gray-600"></i>
+              </div>
+              <span
+                id="sidebar-user-profile-name"
+                class="font-semibold text-sm truncate"
+                style="color: var(--color-text-dark)"
+              ></span>
+            </div>
           </div>
         </div>
       </aside>
@@ -119,31 +110,62 @@
                 <a href="#" class="text-gray-600 hover:text-gray-900"
                   ><i class="ph ph-map-pin text-2xl"></i
                 ></a>
-                <div class="relative">
-                  <a href="#" class="text-gray-600 hover:text-gray-900"
-                    ><i class="ph ph-bell text-2xl"></i
-                  ></a>
-                </div>
-                <div
-                  class="flex items-center space-x-4 border-l border-gray-200 pl-5 ml-2"
-                >
-                  <div class="flex items-center space-x-2">
-                    <div
-                      class="h-9 w-9 rounded-full bg-gray-200 ring-2 ring-offset-2 ring-accent"
-                    ></div>
-                    <span
-                      id="user-profile-name"
-                      class="font-semibold text-sm"
-                      style="color: var(--color-text-dark)"
-                    ></span>
-                  </div>
+                <a href="#" class="text-gray-600 hover:text-gray-900"
+                  ><i class="ph ph-bell text-2xl"></i
+                ></a>
+
+                <div class="relative ml-4">
                   <button
-                    id="logout-button"
-                    title="Cerrar Sesión"
-                    class="text-gray-500 hover:text-red-600 transition-colors"
+                    id="user-profile-button"
+                    class="flex items-center space-x-2 focus:outline-none"
                   >
-                    <i class="ph ph-sign-out text-2xl"></i>
+                    <div
+                      class="h-9 w-9 rounded-full bg-gray-200 ring-2 ring-offset-2 ring-accent flex items-center justify-center"
+                    >
+                      <i class="ph ph-user text-xl text-gray-600"></i>
+                    </div>
                   </button>
+                  <div
+                    id="profile-dropdown"
+                    class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border z-50"
+                  >
+                    <div class="px-4 py-3 border-b">
+                      <p
+                        id="dropdown-username"
+                        class="font-semibold text-sm truncate"
+                        style="color: var(--color-text-dark)"
+                      ></p>
+                      <p
+                        id="dropdown-email"
+                        class="text-xs text-gray-500 truncate"
+                      ></p>
+                    </div>
+                    <div class="py-1">
+                      <a
+                        href="#"
+                        class="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <i class="ph ph-users-three text-lg"></i>
+                        <span>Cambiar Cuenta</span>
+                      </a>
+                      <a
+                        href="/configuration.html"
+                        class="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <i class="ph ph-gear text-lg"></i>
+                        <span>Configuración</span>
+                      </a>
+                    </div>
+                    <div class="py-1 border-t">
+                      <button
+                        id="logout-button"
+                        class="w-full text-left flex items-center space-x-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        <i class="ph ph-sign-out text-lg"></i>
+                        <span>Cerrar Sesión</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
