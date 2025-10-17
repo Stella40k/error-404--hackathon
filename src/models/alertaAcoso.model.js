@@ -21,5 +21,5 @@ const AlertaAcosoSchema = new mongoose.Schema({
 // Índice geoespacial para consultas de ubicación
 AlertaAcosoSchema.index({ location: "2dsphere" });
 
-const AlertaAcoso = mongoose.model("AlertaAcoso", AlertaAcosoSchema);
+const AlertaAcoso = mongoose.models.AlertaAcoso || mongoose.model("AlertaAcoso", AlertaAcosoSchema);
 export default AlertaAcoso;
