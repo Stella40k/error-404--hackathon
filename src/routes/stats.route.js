@@ -6,9 +6,12 @@ import {
 
 const router = Router();
 
-// Quitamos /api/stats ya que esto se define en app.js (Rutas Barril)
-router.get("/by_type", getReportsByProblemType);
+// router.get("/type", getReportsByProblemType);
+router.get("/type", getReportsByProblemType);
 
-router.get("/export_all", getReportsForExport);
+router.get("/export_all", (req, res, next) => {
+    console.log("🟡 Ruta /export_all siendo ejecutada");
+    next();
+}, getReportsForExport);
 
 export default router;

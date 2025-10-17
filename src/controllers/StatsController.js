@@ -10,11 +10,20 @@ const Reporte = mongoose.model("Reporte");
  */
 export const getReportsByProblemType = async (req, res) => {
     try {
+
+        console.log("📊 getReportsByProblemType ejecutándose");
+        return res.status(200).json({ message: "Estadísticas generadas correctamente" });
+
+        // Usamos agregación para agrupar por 'tipoProblema' y contar
+        // CRÍTICO: Asegúrate de que el campo en la base de datos es 'tipoProblema' (camelCase).
+
         const results = await Reporte.aggregate([
             // CRÍTICO: Usamos '$tipoProblema' (camelCase) para coincidir con el modelo.
             { $group: { _id: "$tipoProblema", count: { $sum: 1 } } }, 
             { $sort: { count: -1 } }, // Opcional: ordena por el conteo más alto
         ]);
+
+        console.log("✅ Resultados:", results);
 
         return res.status(200).json(results);
     } catch (error) {
@@ -31,7 +40,13 @@ export const getReportsByProblemType = async (req, res) => {
  */
 export const getReportsForExport = async (req, res) => {
     try {
+
+        console.log("📥 getReportsForExport ejecutándose");
+
         const allReports = await Reporte.find({});
+
+        console.log("✅ Reportes encontrados:", allReports.length);
+
         return res.status(200).json(allReports);
     } catch (error) {
         console.error("Error al exportar reportes:", error);
