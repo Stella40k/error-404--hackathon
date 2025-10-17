@@ -3,15 +3,12 @@ document.addEventListener("DOMContentLoaded", () => {
   for (let i = 1; i <= 4; i++) {
     const toggleButton = document.getElementById(`toggle-button-${i}`);
     const subcategoryPanel = document.getElementById(`subcategory-panel-${i}`);
-
     if (toggleButton && subcategoryPanel) {
       toggleButton.addEventListener("click", () => {
         const isHidden = subcategoryPanel.classList.contains("hidden");
         subcategoryPanel.classList.toggle("hidden");
-
         const buttonText = toggleButton.querySelector("span");
         const buttonIcon = toggleButton.querySelector("i");
-
         if (isHidden) {
           buttonText.textContent = "Ocultar Subcategorías";
           buttonIcon.style.transform = "rotate(180deg)";
@@ -32,6 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const subcategoryContainer = document.getElementById("subcategory-container");
   const subcategorySelect = document.getElementById("subcategory-select");
   const reportForm = document.getElementById("report-form");
+
+  let map;
+  let reportMarker = null;
 
   const subcategories = {
     "Delito / Robo": [
@@ -57,10 +57,43 @@ document.addEventListener("DOMContentLoaded", () => {
     ],
   };
 
+  const initializeMap = () => {
+    if (map) return;
+
+    map = L.map("report-map").setView([-26.1775, -58.1756], 13);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    map.on("click", (e) => {
+      const { lat, lng } = e.latlng;
+      updateMarkerAndInputs(lat, lng);
+    });
+  };
+
+  const updateMarkerAndInputs = (lat, lng) => {
+    if (reportMarker) {
+      reportMarker.setLatLng([lat, lng]);
+    } else {
+      reportMarker = L.marker([lat, lng]).addTo(map);
+    }
+    document.getElementById("report-lat").value = lat;
+    document.getElementById("report-lng").value = lng;
+    map.setView([lat, lng]);
+  };
+
   const resetReportModal = () => {
     if (reportForm) reportForm.reset();
     if (subcategoryContainer) subcategoryContainer.classList.add("hidden");
     if (subcategorySelect) subcategorySelect.innerHTML = "";
+    if (reportMarker) {
+      reportMarker.remove();
+      reportMarker = null;
+    }
+    document.getElementById("report-lat").value = "";
+    document.getElementById("report-lng").value = "";
   };
 
   const closeReportModal = () => {
@@ -76,9 +109,28 @@ document.addEventListener("DOMContentLoaded", () => {
       if (reportModal) {
         reportModal.classList.remove("hidden");
         document.body.classList.add("overflow-hidden");
+        initializeMap();
+        setTimeout(() => map.invalidateSize(), 10);
       }
     });
   }
+
+  document.getElementById("locate-me-btn").addEventListener("click", () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          updateMarkerAndInputs(latitude, longitude);
+          map.setView([latitude, longitude], 16);
+        },
+        () => {
+          alert("No se pudo obtener tu ubicación.");
+        }
+      );
+    } else {
+      alert("La geolocalización no es soportada por este navegador.");
+    }
+  });
 
   if (closeReportModalBtn)
     closeReportModalBtn.addEventListener("click", closeReportModal);
@@ -131,17 +183,22 @@ document.addEventListener("DOMContentLoaded", () => {
         descripcion: document.getElementById("report-description").value,
         anonimo: document.getElementById("anonimo-checkbox").checked,
         location: {
-          lat: -26.1775,
-          lng: -58.1756,
+          lat: document.getElementById("report-lat").value,
+          lng: document.getElementById("report-lng").value,
         },
       };
+
+      if (!reportData.location.lat || !reportData.location.lng) {
+        alert("Por favor, selecciona una ubicación en el mapa.");
+        return;
+      }
 
       if (
         !reportData.categoria_principal ||
         !reportData.subcategoria ||
         !reportData.descripcion
       ) {
-        alert("Por favor completa todos los campos.");
+        alert("Por favor completa todos los campos del formulario.");
         return;
       }
 
