@@ -41,7 +41,7 @@ const obtenerPrioridad = (gravedad) => {
 
 // Anti-Spam: Simulación de limitación por IP (en producción usar Redis)
 const reportesPorIP = new Map();
-const LIMITE_REPORTES_POR_HORA = 5;
+const LIMITE_REPORTES_POR_HORA = 55;
 const VENTANA_TIEMPO = 60 * 60 * 1000; // 1 hora en ms
 
 const verificarAntiSpam = (ip) => {
