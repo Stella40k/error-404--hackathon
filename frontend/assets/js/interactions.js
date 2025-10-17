@@ -31,102 +31,43 @@ document.addEventListener("DOMContentLoaded", () => {
   const categorySelect = document.getElementById("category-select");
   const subcategoryContainer = document.getElementById("subcategory-container");
   const subcategorySelect = document.getElementById("subcategory-select");
-  const reportDescription = document.getElementById("report-description");
-  const reportForm = reportModal ? reportModal.querySelector("form") : null;
+  const reportForm = document.getElementById("report-form");
 
   const subcategories = {
-    delito: [
-      {
-        value: "robo_violencia",
-        text: "Robo con Violencia",
-        description: "Atraco, a mano armada",
-      },
-      {
-        value: "hurto",
-        text: "Hurto",
-        description: "Robo sin violencia, de vehículo/pertenencias",
-      },
-      {
-        value: "vandalismo",
-        text: "Vandalismo y Daño",
-        description: "Rotura de propiedad, Graffiti",
-      },
-      {
-        value: "trafico",
-        text: "Venta / Tráfico Ilegal",
-        description: "Venta de estupefacientes o contrabando",
-      },
+    "Delito / Robo": [
+      "Robo con Violencia",
+      "Hurto",
+      "Vandalismo y Daño",
+      "Venta / Tráfico Ilegal",
     ],
-    violencia: [
-      {
-        value: "acoso",
-        text: "Acoso / Hostigamiento",
-        description: "Verbal, Seguimiento, Conducta sospechosa",
-      },
-      {
-        value: "pelea",
-        text: "Pelea o Agresión",
-        description: "Disturbios en la vía pública, Conflicto vecinal",
-      },
-      {
-        value: "violencia_genero",
-        text: "Situación de Violencia de Género",
-        description: "Requiere máxima prioridad",
-      },
+    "Violencia / Acoso": [
+      "Acoso / Hostigamiento",
+      "Pelea o Agresión",
+      "Situación de Violencia de Género",
     ],
-    transito: [
-      {
-        value: "accidente",
-        text: "Accidente Vial",
-        description: "Colisión, Choque con lesiones",
-      },
-      {
-        value: "conduccion_peligrosa",
-        text: "Conducción Peligrosa",
-        description: "Picadas, Exceso de velocidad",
-      },
-      {
-        value: "obstruccion",
-        text: "Obstrucción / Peligro Vial",
-        description: "Vehículo abandonado, Objeto en la calle",
-      },
+    "Tránsito / Vía Pública": [
+      "Accidente Vial",
+      "Conducción Peligrosa",
+      "Obstrucción / Peligro Vial",
     ],
-    infraestructura: [
-      {
-        value: "iluminacion",
-        text: "Mala Iluminación",
-        description: "Foco roto, Calles oscuras",
-      },
-      {
-        value: "via_publica",
-        text: "Vía Pública en Mal Estado",
-        description: "Baches, Zanjas abiertas, Acera destrozada",
-      },
-      {
-        value: "abandono_urbano",
-        text: "Abandono Urbano",
-        description: "Lotes baldíos, Basurales a cielo abierto",
-      },
+    "Infraestructura de Riesgo": [
+      "Mala Iluminación",
+      "Vía Pública en Mal Estado",
+      "Abandono Urbano",
     ],
   };
 
   const resetReportModal = () => {
-    if (reportForm) {
-      reportForm.reset(); // Resetea todos los campos del formulario
-    }
-    if (subcategoryContainer) {
-      subcategoryContainer.classList.add("hidden"); // Oculta el campo de subcategoría
-    }
-    if (subcategorySelect) {
-      subcategorySelect.innerHTML = ""; // Limpia las opciones de subcategoría
-    }
+    if (reportForm) reportForm.reset();
+    if (subcategoryContainer) subcategoryContainer.classList.add("hidden");
+    if (subcategorySelect) subcategorySelect.innerHTML = "";
   };
 
   const closeReportModal = () => {
     if (reportModal) {
       reportModal.classList.add("hidden");
       document.body.classList.remove("overflow-hidden");
-      resetReportModal(); // Llama a la función para limpiar el modal
+      resetReportModal();
     }
   };
 
@@ -143,13 +84,11 @@ document.addEventListener("DOMContentLoaded", () => {
     closeReportModalBtn.addEventListener("click", closeReportModal);
   if (cancelReportBtn)
     cancelReportBtn.addEventListener("click", closeReportModal);
-
   if (reportModal) {
     reportModal.addEventListener("click", (event) => {
       if (event.target === reportModal) closeReportModal();
     });
   }
-
   document.addEventListener("keydown", (event) => {
     if (
       event.key === "Escape" &&
@@ -163,24 +102,74 @@ document.addEventListener("DOMContentLoaded", () => {
   if (categorySelect) {
     categorySelect.addEventListener("change", (e) => {
       const selectedCategory = e.target.value;
-
       if (!selectedCategory) {
         subcategoryContainer.classList.add("hidden");
         subcategorySelect.innerHTML = "";
         return;
       }
-
       const options = subcategories[selectedCategory];
       subcategorySelect.innerHTML =
         '<option value="">Selecciona una subcategoría</option>';
-      options.forEach((option) => {
+      options.forEach((optionText) => {
         const opt = document.createElement("option");
-        opt.value = option.value;
-        opt.textContent = `${option.text} - ${option.description}`;
+        opt.value = optionText;
+        opt.textContent = optionText;
         subcategorySelect.appendChild(opt);
       });
-
       subcategoryContainer.classList.remove("hidden");
+    });
+  }
+
+  if (reportForm) {
+    reportForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const token = localStorage.getItem("token");
+      const reportData = {
+        categoria_principal: document.getElementById("category-select").value,
+        subcategoria: document.getElementById("subcategory-select").value,
+        descripcion: document.getElementById("report-description").value,
+        anonimo: document.getElementById("anonimo-checkbox").checked,
+        // **DATO SIMULADO:** Tu nuevo backend requiere una ubicación.
+        // La añadimos aquí temporalmente hasta que se implemente el mapa.
+        location: {
+          lat: -26.1775,
+          lng: -58.1756,
+        },
+      };
+
+      if (
+        !reportData.categoria_principal ||
+        !reportData.subcategoria ||
+        !reportData.descripcion
+      ) {
+        alert("Por favor completa todos los campos.");
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/reports", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(reportData),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || "Error al crear el reporte");
+        }
+
+        alert(result.message);
+        closeReportModal();
+        addReportToDOM(result.reporte);
+      } catch (error) {
+        console.error("Error:", error);
+        alert(error.message);
+      }
     });
   }
 });

@@ -74,7 +74,7 @@
           <div>
             <nav class="flex flex-col space-y-2">
               <a
-                href="#"
+                href="/home.html"
                 class="flex items-center space-x-3 px-4 py-2.5 font-semibold rounded-lg"
                 style="
                   background-color: color-mix(
@@ -87,6 +87,13 @@
               >
                 <i class="ph-fill ph-house text-lg"></i>
                 <span>Inicio</span>
+              </a>
+              <a
+                href="/comunidad.html"
+                class="flex items-center space-x-3 px-4 py-2.5 text-gray-600 hover:bg-gray-100 font-semibold rounded-lg"
+              >
+                <i class="ph ph-users text-lg"></i>
+                <span>Comunidad</span>
               </a>
             </nav>
           </div>
@@ -433,6 +440,26 @@
               </div>
             </div>
           </section>
+
+          <section class="mt-12">
+            <div class="flex justify-between items-center mb-6">
+              <h2
+                class="text-2xl font-bold"
+                style="color: var(--color-text-dark)"
+              >
+                Reportes Recientes
+              </h2>
+              <a
+                href="#"
+                class="text-sm font-semibold text-blue-600 hover:underline"
+                >Ver todos</a
+              >
+            </div>
+            <div
+              id="reports-container"
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start"
+            ></div>
+          </section>
         </main>
       </div>
     </div>
@@ -454,9 +481,9 @@
           Crear Nuevo Reporte
         </h3>
         <p class="text-sm text-gray-500 mt-1">
-          Completa la información para reportar un problema en tu comunidad.
+          Completa la información para reportar un problema.
         </p>
-        <form class="mt-6 space-y-4">
+        <form id="report-form" class="mt-6 space-y-4">
           <div>
             <label
               for="category-select"
@@ -466,13 +493,17 @@
             <div class="relative mt-1">
               <select
                 id="category-select"
+                name="categoria_principal"
                 class="block w-full py-2.5 px-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-accent focus:border-accent sm:text-sm appearance-none"
+                required
               >
                 <option value="">Selecciona una categoría</option>
-                <option value="delito">Delito / Robo</option>
-                <option value="violencia">Violencia / Acoso</option>
-                <option value="transito">Tránsito / Vía Pública</option>
-                <option value="infraestructura">
+                <option value="Delito / Robo">Delito / Robo</option>
+                <option value="Violencia / Acoso">Violencia / Acoso</option>
+                <option value="Tránsito / Vía Pública">
+                  Tránsito / Vía Pública
+                </option>
+                <option value="Infraestructura de Riesgo">
                   Infraestructura de Riesgo
                 </option>
               </select>
@@ -492,7 +523,9 @@
             <div class="relative mt-1">
               <select
                 id="subcategory-select"
+                name="subcategoria"
                 class="block w-full py-2.5 px-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-accent focus:border-accent sm:text-sm appearance-none"
+                required
               ></select>
               <div
                 class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
@@ -509,10 +542,25 @@
             >
             <textarea
               id="report-description"
+              name="descripcion"
               rows="4"
               class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-accent focus:border-accent sm:text-sm p-3 resize-y"
               placeholder="Describe el problema que quieres reportar..."
+              required
             ></textarea>
+          </div>
+          <div class="flex items-center">
+            <input
+              id="anonimo-checkbox"
+              name="anonimo"
+              type="checkbox"
+              class="h-4 w-4 text-accent-600 focus:ring-accent-500 border-gray-300 rounded"
+            />
+            <label
+              for="anonimo-checkbox"
+              class="ml-2 block text-sm text-gray-900"
+              >Reportar como Anónimo</label
+            >
           </div>
           <div class="flex justify-end space-x-3 pt-4">
             <button
@@ -538,5 +586,6 @@
     <script src="/assets/js/getProfile.js"></script>
     <script src="/assets/js/logOut.js"></script>
     <script src="/assets/js/interactions.js"></script>
+    <script src="/assets/js/reports.js"></script>
   </body>
 </html>
