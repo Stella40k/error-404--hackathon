@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
-// Accedemos al modelo registrado 'AlertaAcoso'
-const AlertaAcoso = mongoose.model("AlertaAcoso");
+import AlertaAcoso from "../models/AlertaAcoso.model.js"; 
 
 /**
  * Endpoint: POST /api/alerts/acoso
@@ -21,7 +20,6 @@ export const registerSilentAlert = async (req, res) => {
         error: "Formato de ubicación inválido"
       });
     }
-
     // Validar que las coordenadas sean válidas
     if (location.coordinates.length !== 2) {
       return res.status(400).json({

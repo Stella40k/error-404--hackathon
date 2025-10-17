@@ -17,6 +17,7 @@ import taskRoutes from "./src/routes/task.routes.js";
 import reporteRoutes from "./src/routes/reporteRoutes.js";
 import userRoutes from "./src/routes/user.routes.js";
 import statsRoutes from "./src/routes/stats.route.js";
+import alertasRoutes from "./src/routes/alertas.route.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,6 +40,7 @@ app.use("/api", taskRoutes);
 app.use("/api", reporteRoutes);
 app.use("/api", userRoutes);
 app.use("/api", statsRoutes); // ← Tu ruta de stats
+app.use("/api", alertasRoutes);
 
 // Ruta "Catch-All" para el Frontend - DEBE SER LA ÚLTIMA
 app.get("*", (req, res) => {
