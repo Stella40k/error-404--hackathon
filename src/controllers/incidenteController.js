@@ -1,10 +1,11 @@
-import Reporte from "../models/reporte.model.js";
+import Incidente from "../models/incidente.model.js";
+import AlertaAcoso from "../models/alertaAcoso.model.js";
 import User from "../models/user.model.js";
 
-// Matriz de Gravedad Fija - UrbiVox (Para Reportes)
+// Matriz de Gravedad Fija - UrbiVox (Simplificada para Mapa)
 const MATRIZ_GRAVEDAD = {
   "Robo con Violencia": 5,                    // Máxima Prioridad
-  "Situación de Violencia de Género": 5,      // Máxima Prioridad 
+  "Situación de Violencia de Género": 5,      // Máxima Prioridad
   "Hurto": 4,                                 // Alta Prioridad
   "Acoso / Hostigamiento": 4,                 // Alta Prioridad
   "Accidente Vial": 4,                        // Alta Prioridad
@@ -60,123 +61,8 @@ const verificarAntiSpam = (ip) => {
   reportesPorIP.set(ip, reportesRecientes);
 };
 
-export const getAllReports = async (req, res) => {
-  try {
-    const { 
-      // Filtros básicos
-      categoria_principal, 
-      subcategoria,
-      minRisk, 
-      maxRisk,
-      estado,
-      prioridad,
-      anonimo,
-      // Filtros de fecha
-      fechaDesde,
-      fechaHasta,
-      // Filtros de ubicación
-      lat,
-      lng,
-      radio, // en kilómetros
-      // Paginación y ordenamiento
-      limit,
-      page,
-      sortBy,
-      sortOrder,
-      // Usuario
-      usuario
-    } = req.query;
-
-    // Construir filtros
-    const filter = {};
-    
-    // Filtros básicos
-    if (categoria_principal) filter.categoria_principal = categoria_principal;
-    if (subcategoria) filter.subcategoria = subcategoria;
-    if (estado) filter.estado = estado;
-    if (prioridad) filter.prioridad = prioridad;
-    if (usuario) filter.usuario = usuario;
-    if (anonimo !== undefined) filter.anonimo = anonimo === 'true';
-    
-    // Filtros de gravedad
-    if (minRisk || maxRisk) {
-      filter.gravedad_objetiva = {};
-      if (minRisk) filter.gravedad_objetiva.$gte = Number(minRisk);
-      if (maxRisk) filter.gravedad_objetiva.$lte = Number(maxRisk);
-    }
-    
-    // Filtros de fecha
-    if (fechaDesde || fechaHasta) {
-      filter.fechaReporte = {};
-      if (fechaDesde) filter.fechaReporte.$gte = new Date(fechaDesde);
-      if (fechaHasta) filter.fechaReporte.$lte = new Date(fechaHasta);
-    }
-    
-    // Filtros de ubicación (búsqueda por proximidad)
-    let locationFilter = {};
-    if (lat && lng && radio) {
-      locationFilter = {
-        location: {
-          $near: {
-            $geometry: {
-              type: "Point",
-              coordinates: [Number(lng), Number(lat)]
-            },
-            $maxDistance: Number(radio) * 1000 // convertir km a metros
-          }
-        }
-      };
-    }
-    
-    // Combinar filtros
-    const finalFilter = { ...filter, ...locationFilter };
-    
-    // Configurar consulta
-    let query = Reporte.find(finalFilter);
-    
-    // Poblar usuario solo si no es anónimo
-    query = query.populate({
-      path: 'usuario',
-      select: 'person.name person.lastname username',
-      match: { usuario: { $ne: null } }
-    });
-    
-    // Ordenamiento
-    const sortField = sortBy || 'fechaReporte';
-    const sortDirection = sortOrder === 'asc' ? 1 : -1;
-    query = query.sort({ [sortField]: sortDirection });
-    
-    // Paginación
-    const pageNumber = Number(page) || 1;
-    const limitNumber = Number(limit) || 20;
-    const skip = (pageNumber - 1) * limitNumber;
-    
-    query = query.skip(skip).limit(limitNumber);
-    
-    // Ejecutar consulta
-    const reports = await query.exec();
-    
-    // Contar total para paginación
-    const total = await Reporte.countDocuments(finalFilter);
-    
-    res.json({
-      reports,
-      pagination: {
-        page: pageNumber,
-        limit: limitNumber,
-        total,
-        pages: Math.ceil(total / limitNumber)
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ 
-      message: "Error al obtener reportes", 
-      error: error.message 
-    });
-  }
-};
-
-export const createReport = async (req, res) => {
+// Crear nuevo incidente
+export const createIncidente = async (req, res) => {
   try {
     const { 
       categoria_principal, 
@@ -223,8 +109,8 @@ export const createReport = async (req, res) => {
       });
     }
     
-    // Crear el reporte
-    const nuevoReporte = new Reporte({
+    // Crear el incidente
+    const nuevoIncidente = new Incidente({
       categoria_principal,
       subcategoria,
       descripcion,
@@ -235,16 +121,16 @@ export const createReport = async (req, res) => {
       usuario: anonimo ? null : req.user?.id, // Solo si no es anónimo y hay usuario autenticado
     });
     
-    await nuevoReporte.save();
+    await nuevoIncidente.save();
     
     // Poblar datos del usuario si no es anónimo
-    if (!anonimo && nuevoReporte.usuario) {
-      await nuevoReporte.populate('usuario', 'person.name person.lastname username');
+    if (!anonimo && nuevoIncidente.usuario) {
+      await nuevoIncidente.populate('usuario', 'person.name person.lastname username');
     }
     
     res.status(201).json({
-      message: "Reporte creado exitosamente",
-      reporte: nuevoReporte
+      message: "Incidente reportado exitosamente",
+      incidente: nuevoIncidente
     });
   } catch (error) {
     if (error.message.includes("Límite de reportes excedido")) {
@@ -254,78 +140,176 @@ export const createReport = async (req, res) => {
     }
     
     res.status(500).json({ 
-      message: "Error al crear reporte", 
+      message: "Error al crear incidente", 
       error: error.message 
     });
   }
 };
 
-// Obtener un reporte por ID
-export const getReportById = async (req, res) => {
+// Obtener todos los incidentes con filtros
+export const getAllIncidentes = async (req, res) => {
+  try {
+    const { 
+      // Filtros básicos
+      categoria_principal, 
+      subcategoria,
+      gravedad_min,
+      gravedad_max,
+      estado,
+      prioridad,
+      anonimo,
+      // Filtros de fecha
+      fechaDesde,
+      fechaHasta,
+      // Filtros de ubicación
+      lat,
+      lng,
+      radio, // en kilómetros
+      // Paginación y ordenamiento
+      limit,
+      page,
+      sortBy,
+      sortOrder,
+      // Usuario
+      usuario
+    } = req.query;
+
+    // Construir filtros
+    const filter = {};
+    
+    // Filtros básicos
+    if (categoria_principal) filter.categoria_principal = categoria_principal;
+    if (subcategoria) filter.subcategoria = subcategoria;
+    if (estado) filter.estado = estado;
+    if (prioridad) filter.prioridad = prioridad;
+    if (usuario) filter.usuario = usuario;
+    if (anonimo !== undefined) filter.anonimo = anonimo === 'true';
+    
+    // Filtros de gravedad
+    if (gravedad_min || gravedad_max) {
+      filter.gravedad_objetiva = {};
+      if (gravedad_min) filter.gravedad_objetiva.$gte = Number(gravedad_min);
+      if (gravedad_max) filter.gravedad_objetiva.$lte = Number(gravedad_max);
+    }
+    
+    // Filtros de fecha
+    if (fechaDesde || fechaHasta) {
+      filter.fechaReporte = {};
+      if (fechaDesde) filter.fechaReporte.$gte = new Date(fechaDesde);
+      if (fechaHasta) filter.fechaReporte.$lte = new Date(fechaHasta);
+    }
+    
+    // Filtros de ubicación (búsqueda por proximidad)
+    let locationFilter = {};
+    if (lat && lng && radio) {
+      locationFilter = {
+        location: {
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: [Number(lng), Number(lat)]
+            },
+            $maxDistance: Number(radio) * 1000 // convertir km a metros
+          }
+        }
+      };
+    }
+    
+    // Combinar filtros
+    const finalFilter = { ...filter, ...locationFilter };
+    
+    // Configurar consulta
+    let query = Incidente.find(finalFilter);
+    
+    // Poblar usuario solo si no es anónimo
+    query = query.populate({
+      path: 'usuario',
+      select: 'person.name person.lastname username',
+      match: { usuario: { $ne: null } }
+    });
+    
+    // Ordenamiento
+    const sortField = sortBy || 'fechaReporte';
+    const sortDirection = sortOrder === 'asc' ? 1 : -1;
+    query = query.sort({ [sortField]: sortDirection });
+    
+    // Paginación
+    const pageNumber = Number(page) || 1;
+    const limitNumber = Number(limit) || 20;
+    const skip = (pageNumber - 1) * limitNumber;
+    
+    query = query.skip(skip).limit(limitNumber);
+    
+    // Ejecutar consulta
+    const incidentes = await query.exec();
+    
+    // Contar total para paginación
+    const total = await Incidente.countDocuments(finalFilter);
+    
+    res.json({
+      incidentes,
+      pagination: {
+        page: pageNumber,
+        limit: limitNumber,
+        total,
+        pages: Math.ceil(total / limitNumber)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      message: "Error al obtener incidentes", 
+      error: error.message 
+    });
+  }
+};
+
+// Obtener un incidente por ID
+export const getIncidenteById = async (req, res) => {
   try {
     const { id } = req.params;
-    const reporte = await Reporte.findById(id)
+    const incidente = await Incidente.findById(id)
       .populate({
         path: 'usuario',
         select: 'person.name person.lastname username',
         match: { usuario: { $ne: null } }
       });
     
-    if (!reporte) {
-      return res.status(404).json({ message: "Reporte no encontrado" });
+    if (!incidente) {
+      return res.status(404).json({ message: "Incidente no encontrado" });
     }
     
-    res.json(reporte);
+    res.json(incidente);
   } catch (error) {
     res.status(500).json({ 
-      message: "Error al obtener reporte", 
+      message: "Error al obtener incidente", 
       error: error.message 
     });
   }
 };
 
-// Actualizar un reporte
-export const updateReport = async (req, res) => {
+// Actualizar estado de incidente (solo para administradores o el usuario que lo creó)
+export const updateIncidente = async (req, res) => {
   try {
     const { id } = req.params;
-    const { 
-      categoria_principal, 
-      subcategoria, 
-      descripcion, 
-      estado,
-      prioridad 
-    } = req.body;
+    const { estado, descripcion } = req.body;
     
-    const reporte = await Reporte.findById(id);
-    if (!reporte) {
-      return res.status(404).json({ message: "Reporte no encontrado" });
+    const incidente = await Incidente.findById(id);
+    if (!incidente) {
+      return res.status(404).json({ message: "Incidente no encontrado" });
     }
     
-    // Verificar que el usuario es el propietario o admin
-    if (reporte.usuario && reporte.usuario.toString() !== req.user.id) {
+    // Verificar permisos (solo el usuario que lo creó o admin)
+    if (incidente.usuario && incidente.usuario.toString() !== req.user?.id) {
       return res.status(403).json({ 
-        message: "No tienes permisos para actualizar este reporte" 
+        message: "No tienes permisos para actualizar este incidente" 
       });
     }
     
-    // Si se cambia la subcategoría, recalcular gravedad y prioridad
-    let gravedad_objetiva = reporte.gravedad_objetiva;
-    let prioridadCalculada = prioridad;
-    
-    if (subcategoria && subcategoria !== reporte.subcategoria) {
-      gravedad_objetiva = obtenerGravedadObjetiva(subcategoria);
-      prioridadCalculada = obtenerPrioridad(gravedad_objetiva);
-    }
-    
-    const reporteActualizado = await Reporte.findByIdAndUpdate(
+    const incidenteActualizado = await Incidente.findByIdAndUpdate(
       id,
       {
-        ...(categoria_principal && { categoria_principal }),
-        ...(subcategoria && { subcategoria }),
-        ...(descripcion && { descripcion }),
         ...(estado && { estado }),
-        ...(prioridadCalculada && { prioridad: prioridadCalculada }),
-        ...(gravedad_objetiva !== reporte.gravedad_objetiva && { gravedad_objetiva }),
+        ...(descripcion && { descripcion }),
       },
       { new: true, runValidators: true }
     ).populate({
@@ -334,46 +318,19 @@ export const updateReport = async (req, res) => {
       match: { usuario: { $ne: null } }
     });
     
-    res.json(reporteActualizado);
+    res.json(incidenteActualizado);
   } catch (error) {
     res.status(500).json({ 
-      message: "Error al actualizar reporte", 
+      message: "Error al actualizar incidente", 
       error: error.message 
     });
   }
 };
 
-// Eliminar un reporte
-export const deleteReport = async (req, res) => {
+// Obtener estadísticas de incidentes
+export const getIncidenteStats = async (req, res) => {
   try {
-    const { id } = req.params;
-    
-    const reporte = await Reporte.findById(id);
-    if (!reporte) {
-      return res.status(404).json({ message: "Reporte no encontrado" });
-    }
-    
-    // Verificar que el usuario es el propietario
-    if (reporte.usuario && reporte.usuario.toString() !== req.user.id) {
-      return res.status(403).json({ 
-        message: "No tienes permisos para eliminar este reporte" 
-      });
-    }
-    
-    await Reporte.findByIdAndDelete(id);
-    res.json({ message: "Reporte eliminado exitosamente" });
-  } catch (error) {
-    res.status(500).json({ 
-      message: "Error al eliminar reporte", 
-      error: error.message 
-    });
-  }
-};
-
-// Obtener estadísticas de reportes
-export const getReportStats = async (req, res) => {
-  try {
-    const stats = await Reporte.aggregate([
+    const stats = await Incidente.aggregate([
       {
         $group: {
           _id: null,
@@ -533,6 +490,126 @@ export const getMatrizGravedad = async (req, res) => {
   } catch (error) {
     res.status(500).json({ 
       message: "Error al obtener matriz de gravedad", 
+      error: error.message 
+    });
+  }
+};
+
+// Alerta Rápida de Acoso
+export const createAlertaAcoso = async (req, res) => {
+  try {
+    const { location } = req.body;
+    
+    // Validaciones básicas
+    if (!location) {
+      return res.status(400).json({ 
+        message: "Faltan campos obligatorios: location" 
+      });
+    }
+    
+    // Verificar anti-spam para alertas
+    const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
+    verificarAntiSpam(clientIP);
+    
+    // Aceptar tanto GeoJSON { type, coordinates } como { lat, lng }
+    let geoLocation;
+    if (Array.isArray(location.coordinates)) {
+      const [lng, lat] = location.coordinates;
+      geoLocation = {
+        type: "Point",
+        coordinates: [Number(lng), Number(lat)],
+      };
+    } else if (
+      Object.prototype.hasOwnProperty.call(location, "lat") &&
+      Object.prototype.hasOwnProperty.call(location, "lng")
+    ) {
+      geoLocation = {
+        type: "Point",
+        coordinates: [Number(location.lng), Number(location.lat)],
+      };
+    } else {
+      return res.status(400).json({
+        message: "Formato de location inválido. Use { lat, lng } o GeoJSON { type, coordinates }",
+      });
+    }
+    
+    // Crear la alerta
+    const nuevaAlerta = new AlertaAcoso({
+      location: geoLocation,
+      tipo: "acoso"
+    });
+    
+    await nuevaAlerta.save();
+    
+    res.status(201).json({
+      message: "Alerta de acoso registrada exitosamente",
+      alerta: nuevaAlerta
+    });
+  } catch (error) {
+    if (error.message.includes("Límite de reportes excedido")) {
+      return res.status(429).json({ 
+        message: error.message 
+      });
+    }
+    
+    res.status(500).json({ 
+      message: "Error al crear alerta de acoso", 
+      error: error.message 
+    });
+  }
+};
+
+// Obtener alertas de acoso
+export const getAlertasAcoso = async (req, res) => {
+  try {
+    const { 
+      lat,
+      lng,
+      radio, // en kilómetros
+      limit,
+      activa = true
+    } = req.query;
+
+    // Construir filtros
+    const filter = { activa: activa === 'true' };
+    
+    // Filtros de ubicación (búsqueda por proximidad)
+    let locationFilter = {};
+    if (lat && lng && radio) {
+      locationFilter = {
+        location: {
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: [Number(lng), Number(lat)]
+            },
+            $maxDistance: Number(radio) * 1000 // convertir km a metros
+          }
+        }
+      };
+    }
+    
+    // Combinar filtros
+    const finalFilter = { ...filter, ...locationFilter };
+    
+    // Configurar consulta
+    let query = AlertaAcoso.find(finalFilter).sort({ fechaAlerta: -1 });
+    
+    // Límite de resultados
+    if (limit) {
+      query = query.limit(Number(limit));
+    }
+    
+    // Ejecutar consulta
+    const alertas = await query.exec();
+    
+    res.json({
+      alertas,
+      total: alertas.length
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      message: "Error al obtener alertas de acoso", 
       error: error.message 
     });
   }

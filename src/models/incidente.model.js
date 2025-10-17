@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ReporteSchema = new mongoose.Schema({
+const incidenteSchema = new mongoose.Schema({
   location: {
     type: {
       type: String,
@@ -45,6 +45,7 @@ const ReporteSchema = new mongoose.Schema({
     required: true,
     min: 1,
     max: 5,
+    enum: [1, 2, 3, 4, 5]
   },
   fechaReporte: {
     type: Date,
@@ -74,12 +75,12 @@ const ReporteSchema = new mongoose.Schema({
 });
 
 // Índices para optimizar consultas
-ReporteSchema.index({ location: "2dsphere" });
-ReporteSchema.index({ categoria_principal: 1, subcategoria: 1 });
-ReporteSchema.index({ gravedad_objetiva: 1, estado: 1 });
-ReporteSchema.index({ fechaReporte: -1 });
-ReporteSchema.index({ usuario: 1 });
-ReporteSchema.index({ anonimo: 1 });
+incidenteSchema.index({ location: "2dsphere" });
+incidenteSchema.index({ categoria_principal: 1, subcategoria: 1 });
+incidenteSchema.index({ gravedad_objetiva: 1, estado: 1 });
+incidenteSchema.index({ fechaReporte: -1 });
+incidenteSchema.index({ usuario: 1 });
+incidenteSchema.index({ anonimo: 1 });
 
-const Reporte = mongoose.model("Reporte", ReporteSchema);
-export default Reporte;
+const Incidente = mongoose.model("Incidente", incidenteSchema);
+export default Incidente;
