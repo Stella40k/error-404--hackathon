@@ -11,8 +11,7 @@ const ReporteSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-  },
-  categoria_principal: {
+      categoria_principal: {
     type: String,
     required: true,
     enum: ["Delito / Robo", "Violencia / Acoso", "Tránsito / Vía Pública", "Infraestructura de Riesgo"]
@@ -69,7 +68,8 @@ const ReporteSchema = new mongoose.Schema(
     enum: ["mínima", "baja", "moderada", "alta", "máxima"],
     default: "moderada"
   }
-}, {
+  },
+{
   timestamps: true,
 });
 
