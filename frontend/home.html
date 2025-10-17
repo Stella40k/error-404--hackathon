@@ -75,7 +75,7 @@
           <div>
             <nav class="flex flex-col space-y-2">
               <a
-                href="#"
+                href="/home.html"
                 class="flex items-center space-x-3 px-4 py-2.5 font-semibold rounded-lg"
                 style="
                   background-color: color-mix(
@@ -88,6 +88,13 @@
               >
                 <i class="ph-fill ph-house text-lg"></i>
                 <span>Inicio</span>
+              </a>
+              <a
+                href="/comunidad.html"
+                class="flex items-center space-x-3 px-4 py-2.5 text-gray-600 hover:bg-gray-100 font-semibold rounded-lg"
+              >
+                <i class="ph ph-users text-lg"></i>
+                <span>Comunidad</span>
               </a>
             </nav>
           </div>
@@ -455,12 +462,19 @@
           </section>
 
           <section class="mt-12">
-            <h2
-              class="text-2xl font-bold mb-6"
-              style="color: var(--color-text-dark)"
-            >
-              Reportes Recientes
-            </h2>
+            <div class="flex justify-between items-center mb-6">
+              <h2
+                class="text-2xl font-bold"
+                style="color: var(--color-text-dark)"
+              >
+                Reportes Recientes
+              </h2>
+              <a
+                href="#"
+                class="text-sm font-semibold text-blue-600 hover:underline"
+                >Ver todos</a
+              >
+            </div>
             <div
               id="reports-container"
               class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start"
@@ -492,21 +506,6 @@
         <form id="report-form" class="mt-6 space-y-4">
           <div>
             <label
-              for="report-title"
-              class="block text-sm font-semibold text-gray-700"
-              >Título</label
-            >
-            <input
-              type="text"
-              id="report-title"
-              name="titulo"
-              class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-accent focus:border-accent sm:text-sm p-2.5"
-              placeholder="Ej: Poste de luz caído"
-              required
-            />
-          </div>
-          <div>
-            <label
               for="category-select"
               class="block text-sm font-semibold text-gray-700"
               >Categoría</label
@@ -514,7 +513,7 @@
             <div class="relative mt-1">
               <select
                 id="category-select"
-                name="tipoProblema"
+                name="categoria_principal"
                 class="block w-full py-2.5 px-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-accent focus:border-accent sm:text-sm appearance-none"
                 required
               >
@@ -569,6 +568,19 @@
               placeholder="Describe el problema que quieres reportar..."
               required
             ></textarea>
+          </div>
+          <div class="flex items-center">
+            <input
+              id="anonimo-checkbox"
+              name="anonimo"
+              type="checkbox"
+              class="h-4 w-4 text-accent-600 focus:ring-accent-500 border-gray-300 rounded"
+            />
+            <label
+              for="anonimo-checkbox"
+              class="ml-2 block text-sm text-gray-900"
+              >Reportar como Anónimo</label
+            >
           </div>
           <div class="flex justify-end space-x-3 pt-4">
             <button

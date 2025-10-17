@@ -35,31 +35,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const subcategories = {
     "Delito / Robo": [
-      { value: "Robo con Violencia", text: "Robo con Violencia" },
-      { value: "Hurto", text: "Hurto" },
-      { value: "Vandalismo y Daño", text: "Vandalismo y Daño" },
-      { value: "Venta / Tráfico Ilegal", text: "Venta / Tráfico Ilegal" },
+      "Robo con Violencia",
+      "Hurto",
+      "Vandalismo y Daño",
+      "Venta / Tráfico Ilegal",
     ],
     "Violencia / Acoso": [
-      { value: "Acoso / Hostigamiento", text: "Acoso / Hostigamiento" },
-      { value: "Pelea o Agresión", text: "Pelea o Agresión" },
-      {
-        value: "Situación de Violencia de Género",
-        text: "Situación de Violencia de Género",
-      },
+      "Acoso / Hostigamiento",
+      "Pelea o Agresión",
+      "Situación de Violencia de Género",
     ],
     "Tránsito / Vía Pública": [
-      { value: "Accidente Vial", text: "Accidente Vial" },
-      { value: "Conducción Peligrosa", text: "Conducción Peligrosa" },
-      {
-        value: "Obstrucción / Peligro Vial",
-        text: "Obstrucción / Peligro Vial",
-      },
+      "Accidente Vial",
+      "Conducción Peligrosa",
+      "Obstrucción / Peligro Vial",
     ],
     "Infraestructura de Riesgo": [
-      { value: "Mala Iluminación", text: "Mala Iluminación" },
-      { value: "Vía Pública en Mal Estado", text: "Vía Pública en Mal Estado" },
-      { value: "Abandono Urbano", text: "Abandono Urbano" },
+      "Mala Iluminación",
+      "Vía Pública en Mal Estado",
+      "Abandono Urbano",
     ],
   };
 
@@ -116,32 +110,36 @@ document.addEventListener("DOMContentLoaded", () => {
       const options = subcategories[selectedCategory];
       subcategorySelect.innerHTML =
         '<option value="">Selecciona una subcategoría</option>';
-      options.forEach((option) => {
+      options.forEach((optionText) => {
         const opt = document.createElement("option");
-        opt.value = option.value;
-        opt.textContent = option.text;
+        opt.value = optionText;
+        opt.textContent = optionText;
         subcategorySelect.appendChild(opt);
       });
       subcategoryContainer.classList.remove("hidden");
     });
   }
 
-  // --- MANEJO DEL ENVÍO DEL FORMULARIO ---
   if (reportForm) {
     reportForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const token = localStorage.getItem("token");
       const reportData = {
-        titulo: document.getElementById("report-title").value,
-        tipoProblema: document.getElementById("category-select").value,
+        categoria_principal: document.getElementById("category-select").value,
         subcategoria: document.getElementById("subcategory-select").value,
         descripcion: document.getElementById("report-description").value,
+        anonimo: document.getElementById("anonimo-checkbox").checked,
+        // **DATO SIMULADO:** Tu nuevo backend requiere una ubicación.
+        // La añadimos aquí temporalmente hasta que se implemente el mapa.
+        location: {
+          lat: -26.1775,
+          lng: -58.1756,
+        },
       };
 
       if (
-        !reportData.titulo ||
-        !reportData.tipoProblema ||
+        !reportData.categoria_principal ||
         !reportData.subcategoria ||
         !reportData.descripcion
       ) {
@@ -159,16 +157,15 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify(reportData),
         });
 
-        const newReport = await response.json();
+        const result = await response.json();
 
         if (!response.ok) {
-          throw new Error(newReport.message || "Error al crear el reporte");
+          throw new Error(result.message || "Error al crear el reporte");
         }
 
-        alert("¡Reporte creado exitosamente!");
+        alert(result.message);
         closeReportModal();
-
-        addReportToDOM(newReport);
+        addReportToDOM(result.reporte);
       } catch (error) {
         console.error("Error:", error);
         alert(error.message);

@@ -49,19 +49,16 @@ const createReportCard = (report) => {
               report.estado
             }</span>
         </div>
-        
         <div class="flex-grow min-w-0">
             <h3 class="font-bold text-md text-gray-800 break-words">${
               report.subcategoria
             }</h3>
             ${descriptionHTML}
         </div>
-        
         <div class="border-t pt-3 mt-auto flex justify-between items-center text-xs text-gray-500">
             <span>por <strong>${authorName}</strong></span>
             <span>${timeAgo(report.createdAt)}</span>
         </div>
-        
         <button class="w-full text-center mt-2 bg-gray-100 hover:bg-gray-200 font-semibold py-2 rounded-lg text-sm transition-colors">
             Ver Detalles
         </button>
@@ -69,17 +66,8 @@ const createReportCard = (report) => {
     `;
 };
 
-// Función para añadir un nuevo reporte al DOM
-const addReportToDOM = (report) => {
-  const reportsContainer = document.getElementById("reports-container");
-  if (reportsContainer) {
-    const reportCardHTML = createReportCard(report);
-    reportsContainer.insertAdjacentHTML("afterbegin", reportCardHTML);
-  }
-};
-
-// Función principal para obtener y mostrar todos los reportes
-const getAndRenderReports = async (containerId) => {
+// Función principal para obtener todos los reportes y renderizarlos
+const getAndRenderAllReports = async () => {
   try {
     const token = localStorage.getItem("token");
     const response = await fetch("/api/reports", {
@@ -88,15 +76,15 @@ const getAndRenderReports = async (containerId) => {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "No se pudieron obtener los reportes.");
+      throw new Error(
+        error.message || "No se pudieron obtener los reportes de la comunidad."
+      );
     }
 
     const data = await response.json();
-    const reportsContainer = document.getElementById(containerId);
-
+    const reportsContainer = document.getElementById("all-reports-container");
     if (reportsContainer) {
       reportsContainer.innerHTML = "";
-      // El backend ahora devuelve un objeto con una propiedad 'reports'
       data.reports.forEach((report) => {
         reportsContainer.innerHTML += createReportCard(report);
       });
@@ -106,14 +94,11 @@ const getAndRenderReports = async (containerId) => {
   }
 };
 
-// Listeners
+// Listeners para la página de comunidad
 document.addEventListener("DOMContentLoaded", () => {
-  // Carga reportes solo si el contenedor existe en la página actual
-  if (document.getElementById("reports-container")) {
-    getAndRenderReports("reports-container");
-  }
+  getAndRenderAllReports();
 
-  const reportsContainer = document.querySelector(".flex-1"); // Un contenedor padre para delegación de eventos
+  const reportsContainer = document.getElementById("all-reports-container");
   if (reportsContainer) {
     reportsContainer.addEventListener("click", (event) => {
       if (event.target.classList.contains("toggle-description")) {
