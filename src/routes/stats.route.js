@@ -4,29 +4,27 @@ import {
     getReportsForExport,
     getHourlyGravedadCorrelation,
     getDailyGravedadCorrelation,
+    getReportsByCategoria,
+    getSubcategoriasByCategoria
 } from "../controllers/StatsController.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-// router.get("/type", getReportsByProblemType);
+// Estadísticas por tipo de problema
 router.get("/type", getReportsByProblemType);
 
-router.get("/export_all", (req, res, next) => {
-    console.log("🟡 Ruta /export_all siendo ejecutada");
-    next();
-}, getReportsForExport);
+// Estadísticas por categoría principal
+router.get("/categoria", getReportsByCategoria);
 
-// Ruta protegida para correlación hora-gravedad
-router.get("/hourly_gravedad", (req, res, next) => {
-    console.log("🕐 Ruta /hourly_gravedad siendo ejecutada");
-    next();
-}, getHourlyGravedadCorrelation);
+// Obtener subcategorías por categoría
+router.get("/subcategorias", getSubcategoriasByCategoria);
 
-// Ruta protegida para correlación día-gravedad (con authMiddleware)
-router.get("/daily_gravedad", authMiddleware, (req, res, next) => {
-    console.log("📅 Ruta /daily_gravedad siendo ejecutada");
-    next();
-}, getDailyGravedadCorrelation);
+// Exportar reportes
+router.get("/export_all", getReportsForExport);
+
+// Correlaciones
+router.get("/hourly_gravedad", getHourlyGravedadCorrelation);
+router.get("/daily_gravedad", authMiddleware, getDailyGravedadCorrelation);
 
 export default router;
