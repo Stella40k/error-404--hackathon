@@ -37,6 +37,7 @@ app.use(express.static(path.join(__dirname, "frontend")));
 app.use("/api", authRoutes);
 app.use("/api", taskRoutes);
 app.use("/api", reporteRoutes);
+app.use("/api", userRoutes);
 app.use("/api", statsRoutes); // ← Tu ruta de stats
 
 // Ruta "Catch-All" para el Frontend - DEBE SER LA ÚLTIMA
