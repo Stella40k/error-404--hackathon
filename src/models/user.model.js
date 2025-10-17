@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema(
       enum: ["User", "Pro"],
       default: "User",
     },
+    avatarUrl: {
+      type: String,
+      default: null, // Inicialmente no tienen foto
+    }
   },
   {
     timestamps: true,

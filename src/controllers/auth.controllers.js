@@ -2,6 +2,17 @@ import User from "../models/user.model.js";
 import Reporte from "../models/reporte.model.js"; // Importar el modelo de Reporte
 import { generateToken } from "../utils/jwt.util.js";
 import bcrypt from "bcryptjs";
+import fs from 'fs/promises'; 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+
+// --- HELPERS PARA GESTIÓN DE ARCHIVOS (FUERA DE FUNCIONES) ---
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// Define la ruta base para la carpeta de uploads: /frontend/assets/uploads/avatars
+const UPLOADS_FOLDER_PATH = path.join(__dirname, '..', '..', 'frontend', 'assets', 'uploads', 'avatars');
+
 
 export const login = async (req, res) => {
   const { username, password } = req.body;
@@ -51,6 +62,8 @@ export const register = async (req, res) => {
 
 export const profile = async (req, res) => {
   try {
+    // El .select("-password") debe estar en el modelo User, y lo está.
+    // Solo necesitamos asegurarnos que el campo avatarUrl sea incluido.
     const user = await User.findById(req.user.id).select("-password");
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
@@ -157,11 +170,22 @@ export const deleteAccount = async (req, res) => {
       return res.status(401).json({ message: "La contraseña es incorrecta." });
     }
 
-    // --- LÓGICA AÑADIDA ---
-    // Eliminar todos los reportes asociados al usuario
+    // --- LÓGICA DE ELIMINACIÓN DE DATOS ASOCIADOS ---
+    // 1. Eliminar todos los reportes asociados al usuario
     await Reporte.deleteMany({ author: userId });
-
-    // Eliminar el usuario
+    
+    // 2. Eliminar la foto de perfil física si existe
+    if (user.avatarUrl) {
+      const filename = path.basename(user.avatarUrl);
+      const filePath = path.join(UPLOADS_FOLDER_PATH, filename);
+      try {
+        await fs.unlink(filePath);
+      } catch (e) {
+        console.warn(`No se pudo eliminar el avatar físico antiguo: ${e.message}`);
+      }
+    }
+    
+    // 3. Eliminar el usuario de la DB
     await User.findByIdAndDelete(userId);
 
     res
@@ -174,5 +198,64 @@ export const deleteAccount = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error en el servidor", error: error.message });
+  }
+};
+
+// --- FUNCIÓN NUEVA: ACTUALIZAR AVATAR ---
+export const updateProfileAvatar = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      // Si el usuario no existe, borra el archivo que Multer ya subió
+      if (req.file) {
+        await fs.unlink(req.file.path); 
+      }
+      return res.status(404).json({ message: "Usuario no encontrado." });
+    }
+
+    if (!req.file) {
+      // Multer no subió nada
+      return res.status(400).json({ message: "No se ha subido ningún archivo." });
+    }
+    
+    // 1. Eliminar la foto antigua si existe
+    if (user.avatarUrl) {
+        const oldFilename = path.basename(user.avatarUrl);
+        const oldFilePath = path.join(UPLOADS_FOLDER_PATH, oldFilename);
+        
+        try {
+            // Intenta borrar el archivo físico (si existe en la ruta)
+            await fs.unlink(oldFilePath);
+        } catch (error) {
+            console.warn(`No se pudo eliminar el archivo antiguo: ${oldFilePath}`);
+        }
+    }
+
+    // 2. Construir la nueva URL pública (ej. /assets/uploads/avatars/...)
+    const newAvatarUrl = `/assets/uploads/avatars/${req.file.filename}`;
+
+    // 3. Actualizar la base de datos
+    user.avatarUrl = newAvatarUrl;
+    await user.save();
+
+    res.status(200).json({
+      message: "Foto de perfil actualizada exitosamente.",
+      avatarUrl: newAvatarUrl,
+    });
+
+  } catch (error) {
+    console.error("Error al actualizar el avatar:", error);
+    
+    // Si falla por error de DB o cualquier otra cosa, borra el archivo subido
+    if (req.file) {
+        await fs.unlink(req.file.path);
+    }
+    
+    res.status(500).json({ 
+        message: "Error interno del servidor al procesar la imagen.",
+        error: error.message
+    });
   }
 };
