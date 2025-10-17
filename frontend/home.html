@@ -32,7 +32,6 @@
       .subcategory-panel {
         transition: all 0.3s ease-in-out;
       }
-      /* Estilos para la barra de scroll personalizada */
       .subcategory-panel::-webkit-scrollbar {
         width: 6px;
       }
@@ -46,6 +45,9 @@
       }
       .subcategory-panel::-webkit-scrollbar-thumb:hover {
         background: #aaa;
+      }
+      .modal-overlay {
+        background-color: rgba(0, 0, 0, 0.5);
       }
     </style>
   </head>
@@ -131,7 +133,6 @@
                 <a href="#" class="text-gray-600 hover:text-gray-900"
                   ><i class="ph ph-bell text-2xl"></i
                 ></a>
-
                 <div class="relative ml-4">
                   <button
                     id="user-profile-button"
@@ -202,14 +203,14 @@
                 Reporta problemas de infraestructura en tu comunidad y ayuda a
                 las autoridades a priorizar las reparaciones necesarias.
               </p>
-              <a
-                href="#"
+              <button
+                id="open-report-modal"
                 class="inline-flex items-center space-x-2 bg-white font-bold px-6 py-3 rounded-lg mt-8 hover:bg-gray-200 transition-colors"
                 style="color: var(--color-primary)"
               >
                 <i class="ph ph-plus-circle text-xl"></i>
                 <span>Crear Reporte</span>
-              </a>
+              </button>
             </div>
             <div class="concentric-circles hidden md:block">
               <div class="circle-inner-1"></div>
@@ -285,7 +286,6 @@
                   </div>
                 </div>
               </div>
-
               <div
                 class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
               >
@@ -342,7 +342,6 @@
                   </div>
                 </div>
               </div>
-
               <div
                 class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
               >
@@ -398,7 +397,6 @@
                   </div>
                 </div>
               </div>
-
               <div
                 class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
               >
@@ -459,8 +457,106 @@
       </div>
     </div>
 
+    <div
+      id="report-modal"
+      class="hidden fixed inset-0 flex items-center justify-center z-50 modal-overlay"
+    >
+      <div
+        class="bg-white rounded-xl shadow-lg w-full max-w-md mx-auto p-6 relative"
+      >
+        <button
+          id="close-report-modal"
+          class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+        >
+          <i class="ph ph-x text-xl"></i>
+        </button>
+        <h3 class="text-xl font-bold" style="color: var(--color-text-dark)">
+          Crear Nuevo Reporte
+        </h3>
+        <p class="text-sm text-gray-500 mt-1">
+          Completa la información para reportar un problema en tu comunidad.
+        </p>
+        <form class="mt-6 space-y-4">
+          <div>
+            <label
+              for="category-select"
+              class="block text-sm font-semibold text-gray-700"
+              >Categoría</label
+            >
+            <div class="relative mt-1">
+              <select
+                id="category-select"
+                class="block w-full py-2.5 px-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-accent focus:border-accent sm:text-sm appearance-none"
+              >
+                <option value="">Selecciona una categoría</option>
+                <option value="delito">Delito / Robo</option>
+                <option value="violencia">Violencia / Acoso</option>
+                <option value="transito">Tránsito / Vía Pública</option>
+                <option value="infraestructura">
+                  Infraestructura de Riesgo
+                </option>
+              </select>
+              <div
+                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+              >
+                <i class="ph ph-caret-down"></i>
+              </div>
+            </div>
+          </div>
+          <div id="subcategory-container" class="hidden">
+            <label
+              for="subcategory-select"
+              class="block text-sm font-semibold text-gray-700"
+              >Subcategoría</label
+            >
+            <div class="relative mt-1">
+              <select
+                id="subcategory-select"
+                class="block w-full py-2.5 px-3 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-accent focus:border-accent sm:text-sm appearance-none"
+              ></select>
+              <div
+                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+              >
+                <i class="ph ph-caret-down"></i>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label
+              for="report-description"
+              class="block text-sm font-semibold text-gray-700"
+              >Descripción</label
+            >
+            <textarea
+              id="report-description"
+              rows="4"
+              class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-accent focus:border-accent sm:text-sm p-3 resize-y"
+              placeholder="Describe el problema que quieres reportar..."
+            ></textarea>
+          </div>
+          <div class="flex justify-end space-x-3 pt-4">
+            <button
+              type="button"
+              id="cancel-report-button"
+              class="px-5 py-2.5 rounded-lg text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="inline-flex items-center space-x-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors"
+              style="background-color: var(--color-primary)"
+            >
+              <i class="ph ph-plus-circle text-lg"></i>
+              <span>Crear Reporte</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script src="/assets/js/getProfile.js"></script>
     <script src="/assets/js/logOut.js"></script>
-    <script src="/assets/js/categories.js"></script>
+    <script src="/assets/js/interactions.js"></script>
   </body>
 </html>
