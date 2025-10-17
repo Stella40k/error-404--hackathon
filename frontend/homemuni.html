@@ -65,6 +65,29 @@
       .hidden-row {
         display: none;
       }
+      
+      /* ESTILO CORREGIDO: PERMITE LA EXPANSIÓN FLUIDA DE LA TARJETA */
+      .subcategory-panel {
+        max-height: 0;
+        overflow: hidden; /* Oculta el contenido al colapsar */
+        transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+      .subcategory-panel.open {
+        max-height: 1000px; /* Valor grande para permitir que se expanda por completo */
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+      }
+      /* Estilos para el icono del desplegable */
+      /* Ahora apunta hacia ABAJO (rotación 0) cuando está cerrado y GIRA 180 grados (hacia arriba) cuando se abre. */
+      .ph-caret-up {
+          transition: transform 0.3s ease;
+          transform: rotate(0deg); 
+      }
+      .ph-caret-up.rotate-180 {
+          transform: rotate(180deg);
+      }
     </style>
   </head>
 
@@ -75,10 +98,9 @@
       >
         <div class="h-16 flex items-center px-4 border-b border-gray-200">
           <div>
-              <img src="assets/images/Urbi.png" alt="Logo de UrbiVox" class="h-6"/>
+            <img src="assets/images/Urbi.png" alt="Logo de UrbiVox" class="h-6"/>
           </div>
           <div class="ml-3">
-            
             <h2 class="text-md font-bold" style="color: var(--color-text-dark)">
               UrbiVox
             </h2>
@@ -111,11 +133,18 @@
                 <span>Reportes</span>
               </a>
                <a
-                href="#"
+                href="map_incidences.html" 
                 class="flex items-center space-x-3 px-4 py-2.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-100"
               >
                 <i class="ph ph-map-pin-line text-lg"></i>
                 <span>Mapa de Incidencias</span>
+              </a>
+              <a
+                href="statistics_panel.html" 
+                class="flex items-center space-x-3 px-4 py-2.5 font-semibold rounded-lg text-gray-600 hover:bg-gray-100"
+              >
+                <i class="ph ph-chart-bar text-lg"></i>
+                <span>Estadísticas</span>
               </a>
             </nav>
           </div>
@@ -244,7 +273,6 @@
                         <option value="violencia">Violencia</option>
                         <option value="transito">Tránsito</option>
                         <option value="infraestructura">Infraestructura</option>
-                        <option value="otros">Otros</option>
                     </select>
                 </div>
             </div>
@@ -359,104 +387,188 @@
               class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start"
             >
               <div
-                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
+                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col min-h-[220px]"
               >
-                <div class="flex justify-between items-start">
-                  <div class="bg-red-100 p-2 rounded-lg">
-                    <i class="ph ph-shield-warning text-2xl text-red-600"></i>
-                  </div>
+                <div>
+                    <div class="flex justify-between items-start flex-shrink-0">
+                      <div class="bg-red-100 p-2 rounded-lg">
+                        <i class="ph ph-shield-warning text-2xl text-red-600"></i>
+                      </div>
+                      <span class="text-xl font-bold text-gray-800">156</span>
+                    </div>
+                    <h3
+                      class="font-bold text-lg mt-4"
+                      style="color: var(--color-text-dark)"
+                    >
+                      Delito 
+                    </h3>
+                    <p class="text-sm text-gray-500 mt-1 mb-4">
+                      Reportar robos, hurtos y vandalismo
+                    </p>
                 </div>
-                <h3
-                  class="font-bold text-lg mt-4"
-                  style="color: var(--color-text-dark)"
-                >
-                  Delito
-                </h3>
-                <p class="text-sm text-gray-500 mt-1 mb-4">
-                  Robos, hurtos y vandalismo. (Alta Prioridad)
-                </p>
+                
+                <div id="subcategory-panel-delito" class="subcategory-panel flex-grow">
+                    <div class="space-y-3">
+                        <div class="border-b pb-2">
+                            <h4 class="font-semibold text-sm text-gray-800">Robo con Violencia</h4>
+                            <p class="text-xs text-gray-500">Atraco, a mano armada</p>
+                        </div>
+                        <div class="border-b pb-2">
+                            <h4 class="font-semibold text-sm text-gray-800">Hurto</h4>
+                            <p class="text-xs text-gray-500">Robo sin violencia, de vehículo/pertenencias estacionadas</p>
+                        </div>
+                        <div class="border-b pb-2">
+                            <h4 class="font-semibold text-sm text-gray-800">Vandalismo y Daño</h4>
+                            <p class="text-xs text-gray-500">Rotura de propiedad pública/privada, Graffiti</p>
+                        </div>
+                    </div>
+                </div>
                 <button
-                  class="w-full flex justify-center items-center space-x-2 text-left bg-red-600 text-white p-3 rounded-lg hover:bg-red-700 font-semibold text-sm transition-colors"
+                    id="toggle-button-delito"
+                    class="w-full flex justify-center items-center space-x-2 text-left bg-gray-100 text-gray-600 p-3 rounded-lg hover:bg-gray-200 font-semibold text-sm transition-colors mt-4"
                 >
-                  <i class="ph ph-siren-fill text-lg"></i>
-                  <span>Gestionar Incidencias</span>
+                    <i class="ph ph-caret-up text-lg"></i>
+                    <span>Mostrar Subcategorías</span>
                 </button>
               </div>
 
               <div
-                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
+                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col min-h-[220px]"
               >
-                <div class="flex justify-between items-start">
-                  <div class="bg-purple-100 p-2 rounded-lg">
-                    <i
-                      class="ph ph-warning-octagon text-2xl text-purple-600"
-                    ></i>
-                  </div>
+                <div>
+                    <div class="flex justify-between items-start flex-shrink-0">
+                      <div class="bg-purple-100 p-2 rounded-lg">
+                        <i
+                          class="ph ph-warning-octagon text-2xl text-purple-600"
+                        ></i>
+                      </div>
+                      <span class="text-xl font-bold text-gray-800">89</span>
+                    </div>
+                    <h3
+                      class="font-bold text-lg mt-4"
+                      style="color: var(--color-text-dark)"
+                    >
+                      Violencia
+                    </h3>
+                    <p class="text-sm text-gray-500 mt-1 mb-4">
+                      Reportar situaciones de violencia y acoso
+                    </p>
                 </div>
-                <h3
-                  class="font-bold text-lg mt-4"
-                  style="color: var(--color-text-dark)"
-                >
-                  Violencia
-                </h3>
-                <p class="text-sm text-gray-500 mt-1 mb-4">
-                  Violencia, acoso y agresiones. (Urgente)
-                </p>
+
+                <div id="subcategory-panel-violencia" class="subcategory-panel flex-grow">
+                    <div class="space-y-3">
+                        <div class="border-b pb-2">
+                            <h4 class="font-semibold text-sm text-gray-800">Acoso / Hostigamiento</h4>
+                            <p class="text-xs text-gray-500">Verbal, Seguimiento, Conducta sospechosa</p>
+                        </div>
+                        <div class="border-b pb-2">
+                            <h4 class="font-semibold text-sm text-gray-800">Pelea o Agresión</h4>
+                            <p class="text-xs text-gray-500">Disturbios en la vía pública, Conflicto vecinal escalado</p>
+                        </div>
+                        <div class="border-b pb-2">
+                            <h4 class="font-semibold text-sm text-gray-800">Situación de Violencia de Género</h4>
+                            <p class="text-xs text-gray-500">Requiere máxima prioridad</p>
+                        </div>
+                    </div>
+                </div>
                 <button
-                  class="w-full flex justify-center items-center space-x-2 text-left bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 font-semibold text-sm transition-colors"
+                    id="toggle-button-violencia"
+                    class="w-full flex justify-center items-center space-x-2 text-left bg-gray-100 text-gray-600 p-3 rounded-lg hover:bg-gray-200 font-semibold text-sm transition-colors mt-4"
                 >
-                  <i class="ph ph-user-check text-lg"></i>
-                  <span>Asignar Equipo</span>
+                    <i class="ph ph-caret-up text-lg"></i>
+                    <span>Mostrar Subcategorías</span>
                 </button>
               </div>
               
               <div
-                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
+                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col min-h-[220px]"
               >
-                <div class="flex justify-between items-start">
-                  <div class="bg-orange-100 p-2 rounded-lg">
-                    <i class="ph ph-car text-2xl text-orange-600"></i>
-                  </div>
+                <div>
+                    <div class="flex justify-between items-start flex-shrink-0">
+                      <div class="bg-orange-100 p-2 rounded-lg">
+                        <i class="ph ph-car text-2xl text-orange-600"></i>
+                      </div>
+                      <span class="text-xl font-bold text-gray-800">124</span>
+                    </div>
+                    <h3
+                      class="font-bold text-lg mt-4"
+                      style="color: var(--color-text-dark)"
+                    >
+                      Tránsito
+                    </h3>
+                    <p class="text-sm text-gray-500 mt-1 mb-4">
+                      Reportar problemas de tránsito y vía pública
+                    </p>
                 </div>
-                <h3
-                  class="font-bold text-lg mt-4"
-                  style="color: var(--color-text-dark)"
-                >
-                  Tránsito
-                </h3>
-                <p class="text-sm text-gray-500 mt-1 mb-4">
-                  Problemas de circulación y vía pública.
-                </p>
+
+                <div id="subcategory-panel-transito" class="subcategory-panel flex-grow">
+                    <div class="space-y-3">
+                        <div class="border-b pb-2">
+                            <h4 class="font-semibold text-sm text-gray-800">Accidente Vial</h4>
+                            <p class="text-xs text-gray-500">Colisión, Choque con lesiones</p>
+                        </div>
+                        <div class="border-b pb-2">
+                            <h4 class="font-semibold text-sm text-gray-800">Conducción Peligrosa</h4>
+                            <p class="text-xs text-gray-500">Picadas, Exceso de velocidad, Maniobras imprudentes</p>
+                        </div>
+                        <div class="border-b pb-2">
+                            <h4 class="font-semibold text-sm text-gray-800">Obstrucción / Peligro Vial</h4>
+                            <p class="text-xs text-gray-500">Vehículo abandonado, Objeto en la calle, Falta de señalización</p>
+                        </div>
+                    </div>
+                </div>
                 <button
-                  class="w-full flex justify-center items-center space-x-2 text-left bg-orange-600 text-white p-3 rounded-lg hover:bg-orange-700 font-semibold text-sm transition-colors"
+                    id="toggle-button-transito"
+                    class="w-full flex justify-center items-center space-x-2 text-left bg-gray-100 text-gray-600 p-3 rounded-lg hover:bg-gray-200 font-semibold text-sm transition-colors mt-4"
                 >
-                  <i class="ph ph-traffic-cone text-lg"></i>
-                  <span>Ver Patrullas</span>
+                    <i class="ph ph-caret-up text-lg"></i>
+                    <span>Mostrar Subcategorías</span>
                 </button>
               </div>
 
               <div
-                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
+                class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col min-h-[220px]"
               >
-                <div class="flex justify-between items-start">
-                  <div class="bg-yellow-100 p-2 rounded-lg">
-                    <i class="ph ph-warning text-2xl text-yellow-600"></i>
-                  </div>
+                <div>
+                    <div class="flex justify-between items-start flex-shrink-0">
+                      <div class="bg-yellow-100 p-2 rounded-lg">
+                        <i class="ph ph-warning text-2xl text-yellow-600"></i>
+                      </div>
+                      <span class="text-xl font-bold text-gray-800">203</span>
+                    </div>
+                    <h3
+                      class="font-bold text-lg mt-4"
+                      style="color: var(--color-text-dark)"
+                    >
+                      Infraestructura
+                    </h3>
+                    <p class="text-sm text-gray-500 mt-1 mb-4">
+                      Reportar problemas de infraestructura urbana
+                    </p>
                 </div>
-                <h3
-                  class="font-bold text-lg mt-4"
-                  style="color: var(--color-text-dark)"
-                >
-                  Infraestructura
-                </h3>
-                <p class="text-sm text-gray-500 mt-1 mb-4">
-                  Deterioro urbano, baches, luces rotas.
-                </p>
+
+                <div id="subcategory-panel-infraestructura" class="subcategory-panel flex-grow">
+                    <div class="space-y-3">
+                        <div class="border-b pb-2">
+                            <h4 class="font-semibold text-sm text-gray-800">Mala Iluminación</h4>
+                            <p class="text-xs text-gray-500">Foco roto, Calles oscuras</p>
+                        </div>
+                        <div class="border-b pb-2">
+                            <h4 class="font-semibold text-sm text-gray-800">Vía Pública en Mal Estado</h4>
+                            <p class="text-xs text-gray-500">Baches peligrosos, Zanjas abiertas, Acera destrozada</p>
+                        </div>
+                        <div class="border-b pb-2">
+                            <h4 class="font-semibold text-sm text-gray-800">Abandono Urbano</h4>
+                            <p class="text-xs text-gray-500">Lotes baldíos sin cercar, Basurales a cielo abierto</p>
+                        </div>
+                    </div>
+                </div>
                 <button
-                  class="w-full flex justify-center items-center space-x-2 text-left bg-yellow-600 text-white p-3 rounded-lg hover:bg-yellow-700 font-semibold text-sm transition-colors"
+                    id="toggle-button-infraestructura"
+                    class="w-full flex justify-center items-center space-x-2 text-left bg-gray-100 text-gray-600 p-3 rounded-lg hover:bg-gray-200 font-semibold text-sm transition-colors mt-4"
                 >
-                  <i class="ph ph-wrench text-lg"></i>
-                  <span>Ver Mantenimiento</span>
+                    <i class="ph ph-caret-up text-lg"></i>
+                    <span>Mostrar Subcategorías</span>
                 </button>
               </div>
             </div>
@@ -471,33 +583,52 @@
             const filterDropdown = document.getElementById('category-filter');
             const reportRows = document.querySelectorAll('.report-row');
 
-            // Función principal para filtrar la tabla
+            // Lógica de Filtrado de la Tabla (Mantenida)
             const applyFilter = () => {
                 const selectedCategory = filterDropdown.value;
 
                 reportRows.forEach(row => {
-                    // Ocultar todas las filas primero
                     row.classList.add('hidden-row');
-
-                    // Mostrar si se selecciona "Todas las Categorías" (all)
-                    if (selectedCategory === 'all') {
-                        row.classList.remove('hidden-row');
-                        return;
-                    }
-
-                    // Mostrar si la fila tiene la clase de la categoría seleccionada
-                    // La clase en la fila es 'category-' + el valor del select
-                    if (row.classList.contains(`category-${selectedCategory}`)) {
+                    if (selectedCategory === 'all' || row.classList.contains(`category-${selectedCategory}`)) {
                         row.classList.remove('hidden-row');
                     }
                 });
             };
-
-            // Ejecutar el filtro cada vez que cambia el valor del desplegable
             filterDropdown.addEventListener('change', applyFilter);
 
-            // Opcional: Ejecutar el filtro al cargar para asegurar el estado inicial
-            // applyFilter(); 
+
+            // LÓGICA: Despliegue de Subcategorías en Tarjetas (CORREGIDA PARA EXPANSIÓN Y FLECHA)
+            document.querySelectorAll('[id^="toggle-button-"]').forEach(button => {
+                // Estado inicial: Cerrado. El texto ya está establecido en el HTML como "Mostrar Subcategorías".
+
+                button.addEventListener('click', (event) => {
+                    const category = event.currentTarget.id.replace('toggle-button-', '');
+                    const card = event.currentTarget.closest('.bg-white'); // Encuentra la tarjeta padre
+                    const panel = document.getElementById(`subcategory-panel-${category}`);
+                    const icon = event.currentTarget.querySelector('.ph-caret-up');
+                    const span = event.currentTarget.querySelector('span');
+
+                    if (panel) {
+                        const isOpen = panel.classList.toggle('open');
+                        
+                        // 1. ROTACIÓN DE LA FLECHA: Rota 180 grados (apunta hacia arriba) si está abierto.
+                        icon.classList.toggle('rotate-180', isOpen);
+                        
+                        // 2. CAMBIO DE TEXTO
+                        span.textContent = isOpen ? 'Ocultar Subcategorías' : 'Mostrar Subcategorías';
+
+                        // 3. CAMBIO VISUAL DEL BOTÓN
+                        if (isOpen) {
+                            event.currentTarget.classList.remove('bg-gray-100', 'hover:bg-gray-200', 'text-gray-600');
+                            event.currentTarget.classList.add('bg-white', 'text-gray-900', 'border', 'border-gray-300', 'shadow-sm');
+                        } else {
+                            event.currentTarget.classList.remove('bg-white', 'text-gray-900', 'border', 'border-gray-300', 'shadow-sm');
+                            event.currentTarget.classList.add('bg-gray-100', 'hover:bg-gray-200', 'text-gray-600');
+                        }
+                    }
+                });
+            });
+
         });
     </script>
     <script src="/assets/js/getProfile.js"></script>
