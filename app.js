@@ -13,6 +13,8 @@ import { connectDB } from "./src/config/database.js";
 import authRoutes from "./src/routes/auth.routes.js";
 import taskRoutes from "./src/routes/task.routes.js";
 import reporteRoutes from "./src/routes/reporteRoutes.js";
+import categoriaRoutes from "./src/routes/categoriaRoutes.js";
+import incidenteRoutes from "./src/routes/incidenteRoutes.js";
 import userRoutes from "./src/routes/user.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -34,6 +36,8 @@ app.use(express.static(path.join(__dirname, "frontend")));
 app.use("/api", authRoutes);
 app.use("/api", taskRoutes);
 app.use("/api", reporteRoutes);
+app.use("/api", categoriaRoutes);
+app.use("/api", incidenteRoutes);
 app.use("/api", userRoutes);
 
 // Ruta "Catch-All" para el Frontend
