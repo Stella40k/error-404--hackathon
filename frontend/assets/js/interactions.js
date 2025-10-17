@@ -130,8 +130,6 @@ document.addEventListener("DOMContentLoaded", () => {
         subcategoria: document.getElementById("subcategory-select").value,
         descripcion: document.getElementById("report-description").value,
         anonimo: document.getElementById("anonimo-checkbox").checked,
-        // **DATO SIMULADO:** Tu nuevo backend requiere una ubicación.
-        // La añadimos aquí temporalmente hasta que se implemente el mapa.
         location: {
           lat: -26.1775,
           lng: -58.1756,

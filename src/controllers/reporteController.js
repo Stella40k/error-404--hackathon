@@ -28,7 +28,7 @@ const GRAVEDAD_A_PRIORIDAD = {
 // Función para obtener gravedad objetiva basada en subcategoría
 const obtenerGravedadObjetiva = (subcategoria) => {
   const gravedad = MATRIZ_GRAVEDAD[subcategoria];
-  if (!gravedad) {
+  if (gravedad === undefined) {
     throw new Error(`Subcategoría no válida: ${subcategoria}`);
   }
   return gravedad;
@@ -41,7 +41,7 @@ const obtenerPrioridad = (gravedad) => {
 
 // Anti-Spam: Simulación de limitación por IP (en producción usar Redis)
 const reportesPorIP = new Map();
-const LIMITE_REPORTES_POR_HORA = 5;
+const LIMITE_REPORTES_POR_HORA = 55;
 const VENTANA_TIEMPO = 60 * 60 * 1000; // 1 hora en ms
 
 const verificarAntiSpam = (ip) => {
@@ -67,7 +67,6 @@ const verificarAntiSpam = (ip) => {
 export const getAllReports = async (req, res) => {
   try {
     const {
-      // Filtros básicos
       categoria_principal,
       subcategoria,
       minRisk,
@@ -75,26 +74,20 @@ export const getAllReports = async (req, res) => {
       estado,
       prioridad,
       anonimo,
-      // Filtros de fecha
       fechaDesde,
       fechaHasta,
-      // Filtros de ubicación
       lat,
       lng,
       radio, // en kilómetros
-      // Paginación y ordenamiento
       limit,
       page,
       sortBy,
       sortOrder,
-      // Usuario
       usuario,
     } = req.query;
 
-    // Construir filtros
     const filter = {};
 
-    // Filtros básicos
     if (categoria_principal) filter.categoria_principal = categoria_principal;
     if (subcategoria) filter.subcategoria = subcategoria;
     if (estado) filter.estado = estado;
@@ -102,21 +95,18 @@ export const getAllReports = async (req, res) => {
     if (usuario) filter.usuario = usuario;
     if (anonimo !== undefined) filter.anonimo = anonimo === "true";
 
-    // Filtros de gravedad
     if (minRisk || maxRisk) {
       filter.gravedad_objetiva = {};
       if (minRisk) filter.gravedad_objetiva.$gte = Number(minRisk);
       if (maxRisk) filter.gravedad_objetiva.$lte = Number(maxRisk);
     }
 
-    // Filtros de fecha
     if (fechaDesde || fechaHasta) {
       filter.fechaReporte = {};
       if (fechaDesde) filter.fechaReporte.$gte = new Date(fechaDesde);
       if (fechaHasta) filter.fechaReporte.$lte = new Date(fechaHasta);
     }
 
-    // Filtros de ubicación (búsqueda por proximidad)
     let locationFilter = {};
     if (lat && lng && radio) {
       locationFilter = {
@@ -126,41 +116,33 @@ export const getAllReports = async (req, res) => {
               type: "Point",
               coordinates: [Number(lng), Number(lat)],
             },
-            $maxDistance: Number(radio) * 1000, // convertir km a metros
+            $maxDistance: Number(radio) * 1000,
           },
         },
       };
     }
 
-    // Combinar filtros
     const finalFilter = { ...filter, ...locationFilter };
 
-    // Configurar consulta
     let query = Reporte.find(finalFilter);
 
-    // Poblar usuario solo si no es anónimo
     query = query.populate({
       path: "usuario",
-      select: "person.name person.lastname username",
-      match: { usuario: { $ne: null } },
+      select: "username", // Solo necesitamos el username
     });
 
-    // Ordenamiento
     const sortField = sortBy || "fechaReporte";
     const sortDirection = sortOrder === "asc" ? 1 : -1;
     query = query.sort({ [sortField]: sortDirection });
 
-    // Paginación
     const pageNumber = Number(page) || 1;
     const limitNumber = Number(limit) || 20;
     const skip = (pageNumber - 1) * limitNumber;
 
     query = query.skip(skip).limit(limitNumber);
 
-    // Ejecutar consulta
     const reports = await query.exec();
 
-    // Contar total para paginación
     const total = await Reporte.countDocuments(finalFilter);
 
     res.json({
@@ -190,7 +172,6 @@ export const createReport = async (req, res) => {
       anonimo = false,
     } = req.body;
 
-    // Validaciones básicas
     if (!categoria_principal || !subcategoria || !descripcion || !location) {
       return res.status(400).json({
         message:
@@ -198,15 +179,12 @@ export const createReport = async (req, res) => {
       });
     }
 
-    // Verificar anti-spam
     const clientIP = req.ip || req.connection.remoteAddress || "unknown";
     verificarAntiSpam(clientIP);
 
-    // Obtener gravedad objetiva automáticamente
     const gravedad_objetiva = obtenerGravedadObjetiva(subcategoria);
     const prioridad = obtenerPrioridad(gravedad_objetiva);
 
-    // Aceptar tanto GeoJSON { type, coordinates } como { lat, lng }
     let geoLocation;
     if (Array.isArray(location.coordinates)) {
       const [lng, lat] = location.coordinates;
@@ -214,10 +192,7 @@ export const createReport = async (req, res) => {
         type: "Point",
         coordinates: [Number(lng), Number(lat)],
       };
-    } else if (
-      Object.prototype.hasOwnProperty.call(location, "lat") &&
-      Object.prototype.hasOwnProperty.call(location, "lng")
-    ) {
+    } else if (location.lat && location.lng) {
       geoLocation = {
         type: "Point",
         coordinates: [Number(location.lng), Number(location.lat)],
@@ -229,7 +204,6 @@ export const createReport = async (req, res) => {
       });
     }
 
-    // Crear el reporte
     const nuevoReporte = new Reporte({
       categoria_principal,
       subcategoria,
@@ -238,17 +212,13 @@ export const createReport = async (req, res) => {
       gravedad_objetiva,
       prioridad,
       anonimo,
-      usuario: anonimo ? null : req.user?.id, // Solo si no es anónimo y hay usuario autenticado
+      usuario: anonimo ? null : req.user?.id,
     });
 
     await nuevoReporte.save();
 
-    // Poblar datos del usuario si no es anónimo
     if (!anonimo && nuevoReporte.usuario) {
-      await nuevoReporte.populate(
-        "usuario",
-        "person.name person.lastname username"
-      );
+      await nuevoReporte.populate("usuario", "username");
     }
 
     res.status(201).json({
@@ -269,14 +239,12 @@ export const createReport = async (req, res) => {
   }
 };
 
-// Obtener un reporte por ID
 export const getReportById = async (req, res) => {
   try {
     const { id } = req.params;
     const reporte = await Reporte.findById(id).populate({
       path: "usuario",
-      select: "person.name person.lastname username",
-      match: { usuario: { $ne: null } },
+      select: "username",
     });
 
     if (!reporte) {
@@ -292,7 +260,6 @@ export const getReportById = async (req, res) => {
   }
 };
 
-// Actualizar un reporte
 export const updateReport = async (req, res) => {
   try {
     const { id } = req.params;
@@ -309,16 +276,15 @@ export const updateReport = async (req, res) => {
       return res.status(404).json({ message: "Reporte no encontrado" });
     }
 
-    // Verificar que el usuario es el propietario o admin
     if (reporte.usuario && reporte.usuario.toString() !== req.user.id) {
+      // Aquí se podría añadir una lógica para roles de administrador en el futuro
       return res.status(403).json({
         message: "No tienes permisos para actualizar este reporte",
       });
     }
 
-    // Si se cambia la subcategoría, recalcular gravedad y prioridad
     let gravedad_objetiva = reporte.gravedad_objetiva;
-    let prioridadCalculada = prioridad;
+    let prioridadCalculada = prioridad || reporte.prioridad;
 
     if (subcategoria && subcategoria !== reporte.subcategoria) {
       gravedad_objetiva = obtenerGravedadObjetiva(subcategoria);
@@ -332,16 +298,13 @@ export const updateReport = async (req, res) => {
         ...(subcategoria && { subcategoria }),
         ...(descripcion && { descripcion }),
         ...(estado && { estado }),
-        ...(prioridadCalculada && { prioridad: prioridadCalculada }),
-        ...(gravedad_objetiva !== reporte.gravedad_objetiva && {
-          gravedad_objetiva,
-        }),
+        prioridad: prioridadCalculada,
+        gravedad_objetiva,
       },
       { new: true, runValidators: true }
     ).populate({
       path: "usuario",
-      select: "person.name person.lastname username",
-      match: { usuario: { $ne: null } },
+      select: "username",
     });
 
     res.json(reporteActualizado);
@@ -353,7 +316,6 @@ export const updateReport = async (req, res) => {
   }
 };
 
-// Eliminar un reporte
 export const deleteReport = async (req, res) => {
   try {
     const { id } = req.params;
@@ -363,8 +325,8 @@ export const deleteReport = async (req, res) => {
       return res.status(404).json({ message: "Reporte no encontrado" });
     }
 
-    // Verificar que el usuario es el propietario
     if (reporte.usuario && reporte.usuario.toString() !== req.user.id) {
+      // Aquí se podría añadir una lógica para roles de administrador
       return res.status(403).json({
         message: "No tienes permisos para eliminar este reporte",
       });
@@ -380,7 +342,6 @@ export const deleteReport = async (req, res) => {
   }
 };
 
-// Obtener estadísticas de reportes
 export const getReportStats = async (req, res) => {
   try {
     const stats = await Reporte.aggregate([
@@ -388,20 +349,15 @@ export const getReportStats = async (req, res) => {
         $group: {
           _id: null,
           total: { $sum: 1 },
-          porCategoria: {
-            $push: "$categoria_principal",
-          },
-          porGravedad: {
-            $push: "$gravedad_objetiva",
-          },
-          porEstado: {
-            $push: "$estado",
-          },
+          porCategoria: { $push: "$categoria_principal" },
+          porGravedad: { $push: "$gravedad_objetiva" },
+          porEstado: { $push: "$estado" },
           promedioGravedad: { $avg: "$gravedad_objetiva" },
         },
       },
       {
         $project: {
+          _id: 0,
           total: 1,
           promedioGravedad: { $round: ["$promedioGravedad", 2] },
           categorias: {
@@ -540,7 +496,6 @@ export const getReportStats = async (req, res) => {
   }
 };
 
-// Obtener matriz de gravedad (para frontend)
 export const getMatrizGravedad = async (req, res) => {
   try {
     res.json({
