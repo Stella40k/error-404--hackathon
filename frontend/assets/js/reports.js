@@ -1,4 +1,3 @@
-// Función para calcular el tiempo transcurrido desde una fecha
 const timeAgo = (date) => {
   const seconds = Math.floor((new Date() - new Date(date)) / 1000);
   let interval = seconds / 31536000;
@@ -14,27 +13,17 @@ const timeAgo = (date) => {
   return "Hace unos momentos";
 };
 
-// Función para crear el HTML de una tarjeta de reporte individual
+// Función para crear el HTML de una tarjeta de reporte
 const createReportCard = (report) => {
   const authorName =
     report.anonimo || !report.usuario ? "Anónimo" : report.usuario.username;
   const maxLength = 50;
   let descriptionHTML = "";
-
   const sanitizedDescription = report.descripcion.replace(/"/g, "&quot;");
 
   if (report.descripcion.length > maxLength) {
     const truncatedText = sanitizedDescription.substring(0, maxLength) + "...";
-    descriptionHTML = `
-            <p class="text-sm text-gray-500 report-description break-words">${truncatedText}</p>
-            <button 
-                class="text-xs font-semibold text-blue-600 hover:underline toggle-description mt-1 self-start"
-                data-full-text="${sanitizedDescription}"
-                data-truncated-text="${truncatedText}"
-            >
-                Ver más
-            </button>
-        `;
+    descriptionHTML = `<p class="text-sm text-gray-500 report-description break-words">${truncatedText}</p><button class="text-xs font-semibold text-blue-600 hover:underline toggle-description mt-1 self-start" data-full-text="${sanitizedDescription}" data-truncated-text="${truncatedText}">Ver más</button>`;
   } else {
     descriptionHTML = `<p class="text-sm text-gray-500 report-description break-words">${report.descripcion}</p>`;
   }
@@ -56,6 +45,14 @@ const createReportCard = (report) => {
             }</h3>
             ${descriptionHTML}
         </div>
+
+        <div id="map-${report._id}" class="report-card-map" data-lat="${
+    report.location.coordinates[1]
+  }" data-lng="${report.location.coordinates[0]}"></div>
+
+        <span class="text-xs font-medium bg-gray-200 text-gray-700 px-2 py-1 rounded-full self-start mt-2">${
+          report.subcategoria
+        }</span>
         
         <div class="border-t pt-3 mt-auto flex justify-between items-center text-xs text-gray-500">
             <span>por <strong>${authorName}</strong></span>
@@ -69,12 +66,40 @@ const createReportCard = (report) => {
     `;
 };
 
-// Función para añadir un nuevo reporte al DOM
+// Función para inicializar los mapas en las tarjetas de reporte
+const initializeCardMaps = () => {
+  const mapDivs = document.querySelectorAll(".report-card-map");
+  mapDivs.forEach((div) => {
+    // Evitar reinicializar un mapa
+    if (div._leaflet_id) return;
+
+    const lat = div.dataset.lat;
+    const lng = div.dataset.lng;
+
+    const map = L.map(div.id, {
+      center: [lat, lng],
+      zoom: 15,
+      zoomControl: false,
+      dragging: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+    });
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(
+      map
+    );
+    L.marker([lat, lng]).addTo(map);
+  });
+};
+
+// Función para añadir un nuevo reporte al DOM e inicializar su mapa
 const addReportToDOM = (report) => {
   const reportsContainer = document.getElementById("reports-container");
   if (reportsContainer) {
     const reportCardHTML = createReportCard(report);
     reportsContainer.insertAdjacentHTML("afterbegin", reportCardHTML);
+    // Esperar un momento para que el DOM se actualice antes de inicializar el mapa
+    setTimeout(initializeCardMaps, 50);
   }
 };
 
@@ -96,10 +121,11 @@ const getAndRenderReports = async (containerId) => {
 
     if (reportsContainer) {
       reportsContainer.innerHTML = "";
-      // El backend ahora devuelve un objeto con una propiedad 'reports'
       data.reports.forEach((report) => {
         reportsContainer.innerHTML += createReportCard(report);
       });
+      // Inicializar todos los mapas después de renderizar las tarjetas
+      initializeCardMaps();
     }
   } catch (error) {
     console.error("Error:", error);
@@ -108,18 +134,16 @@ const getAndRenderReports = async (containerId) => {
 
 // Listeners
 document.addEventListener("DOMContentLoaded", () => {
-  // Carga reportes solo si el contenedor existe en la página actual
   if (document.getElementById("reports-container")) {
     getAndRenderReports("reports-container");
   }
 
-  const reportsContainer = document.querySelector(".flex-1"); // Un contenedor padre para delegación de eventos
-  if (reportsContainer) {
-    reportsContainer.addEventListener("click", (event) => {
+  const mainContainer = document.querySelector(".flex-1");
+  if (mainContainer) {
+    mainContainer.addEventListener("click", (event) => {
       if (event.target.classList.contains("toggle-description")) {
         const button = event.target;
         const descriptionP = button.previousElementSibling;
-
         const isTruncated = button.textContent.trim() === "Ver más";
 
         if (isTruncated) {
