@@ -39,7 +39,7 @@ app.use("/api", reporteRoutes);
 app.use("/api", categoriaRoutes);
 app.use("/api", incidenteRoutes);
 app.use("/api", userRoutes);
-
+app.use(express.static(path.join(__dirname, "frontend"))); //avatarurl
 // Ruta "Catch-All" para el Frontend
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend", "index.html"));

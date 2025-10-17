@@ -47,11 +47,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     const sidebarUsername = document.getElementById(
       "sidebar-user-profile-name"
     );
+    const headerAvatar = document.getElementById("header-avatar");
+    const sidebarAvatar = document.getElementById("sidebar-avatar");
 
     if (response.user) {
       if (dropdownUsername) dropdownUsername.innerText = response.user.username;
       if (dropdownEmail) dropdownEmail.innerText = response.user.email;
       if (sidebarUsername) sidebarUsername.innerText = response.user.username;
+
+      // Pintar avatar en header y sidebar si existe avatarUrl
+      if (response.user.avatarUrl) {
+        const url = response.user.avatarUrl;
+        if (headerAvatar) {
+          headerAvatar.style.backgroundImage = `url(${url})`;
+          headerAvatar.style.backgroundSize = 'cover';
+          headerAvatar.style.backgroundPosition = 'center';
+          headerAvatar.innerHTML = '';
+        }
+        if (sidebarAvatar) {
+          sidebarAvatar.style.backgroundImage = `url(${url})`;
+          sidebarAvatar.style.backgroundSize = 'cover';
+          sidebarAvatar.style.backgroundPosition = 'center';
+          sidebarAvatar.innerHTML = '';
+        }
+      }
     }
   } catch (error) {
     console.error("Error al obtener el perfil:", error.message);
