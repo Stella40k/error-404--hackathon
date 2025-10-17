@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mapa de Reportes - UrbiVox</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      href="assets/img/Urbi.png"
+      sizes="32x32"
+      type="image/png"
+    />
+    <link
+      rel="icon"
+      href="assets/img/Urbi.png"
+      sizes="16x16"
+      type="image/png"
+    />
+    <link rel="stylesheet" href="/assets/style/home.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+
+    <style>
+      :root {
+        --color-primary: #6cb52d;
+        --color-accent: #164a41;
+        --color-text-dark: #1b2a19;
+        font-family: "Poppins", sans-serif;
+      }
+      .ring-accent {
+        --tw-ring-color: var(--color-accent);
+      }
+      #main-map {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-50">
+    <div class="flex h-screen">
+      <aside
+        class="w-64 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col"
+      >
+        <div class="h-16 flex items-center px-4 border-b border-gray-200">
+          <div>
+            <img src="./assets/img/Urbi.png" class="h-7" alt="Urbi" />
+          </div>
+          <div class="ml-3">
+            <h2 class="text-md font-bold" style="color: var(--color-text-dark)">
+              UrbiVox
+            </h2>
+            <p class="text-xs text-gray-500">Reportes Ciudadanos</p>
+          </div>
+        </div>
+        <div class="flex-grow flex flex-col justify-between p-4">
+          <div>
+            <nav class="flex flex-col space-y-2">
+              <a
+                href="/home.html"
+                class="flex items-center space-x-3 px-4 py-2.5 text-gray-600 hover:bg-gray-100 font-semibold rounded-lg"
+              >
+                <i class="ph ph-house text-lg"></i>
+                <span>Inicio</span>
+              </a>
+              <a
+                href="/comunidad.html"
+                class="flex items-center space-x-3 px-4 py-2.5 text-gray-600 hover:bg-gray-100 font-semibold rounded-lg"
+              >
+                <i class="ph ph-users text-lg"></i>
+                <span>Comunidad</span>
+              </a>
+              <a
+                href="/mapa.html"
+                class="flex items-center space-x-3 px-4 py-2.5 font-semibold rounded-lg"
+                style="
+                  background-color: color-mix(
+                    in srgb,
+                    var(--color-accent) 20%,
+                    transparent
+                  );
+                  color: var(--color-primary);
+                "
+              >
+                <i class="ph-fill ph-map-trifold text-lg"></i>
+                <span>Mapa</span>
+              </a>
+            </nav>
+          </div>
+          <div class="space-y-2">
+            <div
+              id="sidebar-profile"
+              class="flex items-center space-x-2 px-4 py-2.5 border-t border-gray-200 pt-4"
+            >
+              <div
+                class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"
+              >
+                <i class="ph ph-user text-lg text-gray-600"></i>
+              </div>
+              <span
+                id="sidebar-user-profile-name"
+                class="font-semibold text-sm truncate"
+                style="color: var(--color-text-dark)"
+              ></span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="flex-1 flex flex-col overflow-y-hidden">
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+          <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+              <div class="flex items-center space-x-4">
+                <h1
+                  class="text-xl font-bold"
+                  style="color: var(--color-text-dark)"
+                >
+                  Mapa de Reportes
+                </h1>
+              </div>
+              <div class="flex items-center space-x-5">
+                <a href="#" class="text-gray-600 hover:text-gray-900"
+                  ><i class="ph ph-map-pin text-2xl"></i
+                ></a>
+                <a href="#" class="text-gray-600 hover:text-gray-900"
+                  ><i class="ph ph-bell text-2xl"></i
+                ></a>
+                <div class="relative ml-4">
+                  <button
+                    id="user-profile-button"
+                    class="flex items-center space-x-2 focus:outline-none"
+                  >
+                    <div
+                      class="h-9 w-9 rounded-full bg-gray-200 ring-2 ring-offset-2 ring-accent flex items-center justify-center"
+                    >
+                      <i class="ph ph-user text-xl text-gray-600"></i>
+                    </div>
+                  </button>
+                  <div
+                    id="profile-dropdown"
+                    class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border z-50"
+                  >
+                    <div class="px-4 py-3 border-b">
+                      <p
+                        id="dropdown-username"
+                        class="font-semibold text-sm truncate"
+                        style="color: var(--color-text-dark)"
+                      ></p>
+                      <p
+                        id="dropdown-email"
+                        class="text-xs text-gray-500 truncate"
+                      ></p>
+                    </div>
+                    <div class="py-1">
+                      <a
+                        href="/configuration.html"
+                        class="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        <i class="ph ph-gear text-lg"></i>
+                        <span>Configuración</span>
+                      </a>
+                    </div>
+                    <div class="py-1 border-t">
+                      <button
+                        id="logout-button"
+                        class="w-full text-left flex items-center space-x-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        <i class="ph ph-sign-out text-lg"></i>
+                        <span>Cerrar Sesión</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="flex-1 relative">
+          <div
+            id="map-filter-sidebar"
+            class="absolute top-4 left-4 z-[1000] bg-white p-3 rounded-lg shadow-lg w-64"
+          >
+            <h2 class="text-lg font-bold mb-2 text-gray-800">Categorías</h2>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center p-2 rounded-md hover:bg-gray-100 filter-btn active"
+                  data-category="Todos"
+                >
+                  <div
+                    class="w-8 h-8 flex items-center justify-center bg-gray-500 text-white rounded-full mr-3"
+                  >
+                    <i class="ph ph-grid-four"></i>
+                  </div>
+                  <span>Todos</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center p-2 rounded-md hover:bg-gray-100 filter-btn"
+                  data-category="Delito / Robo"
+                >
+                  <div
+                    class="w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-full mr-3"
+                  >
+                    <i class="ph ph-shield-warning"></i>
+                  </div>
+                  <span>Delito / Robo</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center p-2 rounded-md hover:bg-gray-100 filter-btn"
+                  data-category="Violencia / Acoso"
+                >
+                  <div
+                    class="w-8 h-8 flex items-center justify-center bg-purple-500 text-white rounded-full mr-3"
+                  >
+                    <i class="ph ph-warning-octagon"></i>
+                  </div>
+                  <span>Violencia / Acoso</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center p-2 rounded-md hover:bg-gray-100 filter-btn"
+                  data-category="Tránsito / Vía Pública"
+                >
+                  <div
+                    class="w-8 h-8 flex items-center justify-center bg-orange-500 text-white rounded-full mr-3"
+                  >
+                    <i class="ph ph-car"></i>
+                  </div>
+                  <span>Tránsito / Vía Pública</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center p-2 rounded-md hover:bg-gray-100 filter-btn"
+                  data-category="Infraestructura de Riesgo"
+                >
+                  <div
+                    class="w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-full mr-3"
+                  >
+                    <i class="ph ph-warning"></i>
+                  </div>
+                  <span>Infraestructura de Riesgo</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div id="main-map"></div>
+        </main>
+      </div>
+    </div>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="/assets/js/getProfile.js"></script>
+    <script src="/assets/js/logOut.js"></script>
+    <script src="/assets/js/mapa.js"></script>
+  </body>
+</html>
