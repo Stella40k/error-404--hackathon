@@ -36,8 +36,9 @@
         --tw-ring-color: var(--color-accent);
       }
       #main-map {
-        height: calc(100vh - 4rem);
-      } /* Ocupa toda la altura menos el header */
+        height: 100%;
+        width: 100%;
+      }
     </style>
   </head>
 
@@ -187,7 +188,85 @@
           </div>
         </header>
 
-        <main class="flex-1">
+        <main class="flex-1 relative">
+          <div
+            id="map-filter-sidebar"
+            class="absolute top-4 left-4 z-[1000] bg-white p-3 rounded-lg shadow-lg w-64"
+          >
+            <h2 class="text-lg font-bold mb-2 text-gray-800">Categorías</h2>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center p-2 rounded-md hover:bg-gray-100 filter-btn active"
+                  data-category="Todos"
+                >
+                  <div
+                    class="w-8 h-8 flex items-center justify-center bg-gray-500 text-white rounded-full mr-3"
+                  >
+                    <i class="ph ph-grid-four"></i>
+                  </div>
+                  <span>Todos</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center p-2 rounded-md hover:bg-gray-100 filter-btn"
+                  data-category="Delito / Robo"
+                >
+                  <div
+                    class="w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-full mr-3"
+                  >
+                    <i class="ph ph-shield-warning"></i>
+                  </div>
+                  <span>Delito / Robo</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center p-2 rounded-md hover:bg-gray-100 filter-btn"
+                  data-category="Violencia / Acoso"
+                >
+                  <div
+                    class="w-8 h-8 flex items-center justify-center bg-purple-500 text-white rounded-full mr-3"
+                  >
+                    <i class="ph ph-warning-octagon"></i>
+                  </div>
+                  <span>Violencia / Acoso</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center p-2 rounded-md hover:bg-gray-100 filter-btn"
+                  data-category="Tránsito / Vía Pública"
+                >
+                  <div
+                    class="w-8 h-8 flex items-center justify-center bg-orange-500 text-white rounded-full mr-3"
+                  >
+                    <i class="ph ph-car"></i>
+                  </div>
+                  <span>Tránsito / Vía Pública</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center p-2 rounded-md hover:bg-gray-100 filter-btn"
+                  data-category="Infraestructura de Riesgo"
+                >
+                  <div
+                    class="w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-full mr-3"
+                  >
+                    <i class="ph ph-warning"></i>
+                  </div>
+                  <span>Infraestructura de Riesgo</span>
+                </a>
+              </li>
+            </ul>
+          </div>
           <div id="main-map"></div>
         </main>
       </div>
