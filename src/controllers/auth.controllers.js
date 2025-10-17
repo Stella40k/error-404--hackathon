@@ -15,8 +15,6 @@ export const login = async (req, res) => {
     }
     const token = generateToken({
       id: user._id,
-      name: user.name, // Ya no está dentro de person
-      lastname: user.lastname, // Ya no está dentro de person
       username: user.username,
     });
     return res.json({ message: "Login exitoso", token });
@@ -29,7 +27,7 @@ export const login = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    const { name, lastname, username, email, password } = req.body;
+    const { username, email, password } = req.body;
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
       return res.status(400).json({ message: "El email o username ya existe" });
@@ -37,8 +35,6 @@ export const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const newUser = new User({
-      name, // Directamente en el modelo
-      lastname, // Directamente en el modelo
       username,
       email,
       password: hashedPassword,
@@ -72,11 +68,11 @@ export const logout = (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { name, lastname, username, bio } = req.body;
+    const { username, bio } = req.body;
     const userId = req.user.id;
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { name, lastname, username, bio },
+      { username, bio },
       { new: true }
     ).select("-password");
     if (!updatedUser) {
@@ -132,6 +128,38 @@ export const updateAccountCredentials = async (req, res) => {
     }
     await user.save();
     res.status(200).json({ message: "Cuenta actualizada exitosamente." });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error en el servidor", error: error.message });
+  }
+};
+export const deleteAccount = async (req, res) => {
+  const { password } = req.body;
+  const userId = req.user.id;
+
+  try {
+    if (!password) {
+      return res.status(400).json({
+        message: "Se requiere la contraseña para eliminar la cuenta.",
+      });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado." });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "La contraseña es incorrecta." });
+    }
+
+    await User.findByIdAndDelete(userId);
+
+    res
+      .status(200)
+      .json({ message: "Tu cuenta ha sido eliminada exitosamente." });
   } catch (error) {
     res
       .status(500)

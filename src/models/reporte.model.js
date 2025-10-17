@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
 
-const ReporteSchema = new mongoose.Schema({
-  location: {
-    type: {
+const ReporteSchema = new mongoose.Schema(
+  {
+    titulo: {
       type: String,
-      enum: ["Point"],
       required: true,
+      trim: true,
     },
-    coordinates: {
-      type: [Number],
+    tipoProblema: {
+      type: String,
       required: true,
     },
   },

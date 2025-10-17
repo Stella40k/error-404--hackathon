@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const accountContent = document.getElementById("account-section-content");
   const profileTab = document.getElementById("profile-tab");
   const accountTab = document.getElementById("account-tab");
-
+  const deleteAccountBtn = document.getElementById("delete-account-btn");
   const profileDisplaySection = document.getElementById(
     "profile-display-section"
   );
@@ -59,10 +59,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const data = await response.json();
       currentUser = data.user;
 
-      document.getElementById("profile-name").textContent =
-        currentUser.name || "N/A";
-      document.getElementById("profile-lastname").textContent =
-        currentUser.lastname || "N/A";
       document.getElementById("profile-username").textContent =
         currentUser.username ? `@${currentUser.username}` : "N/A";
       document.getElementById("profile-bio").textContent =
@@ -83,8 +79,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   accountTab.addEventListener("click", () => setActiveTab(accountTab));
 
   editProfileBtn.addEventListener("click", () => {
-    document.getElementById("edit-name").value = currentUser.name || "";
-    document.getElementById("edit-lastname").value = currentUser.lastname || "";
     document.getElementById("edit-username").value = currentUser.username || "";
     document.getElementById("edit-bio").value = currentUser.bio || "";
     showView(profileEditSection, profileDisplaySection);
@@ -107,12 +101,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     showView(accountDisplaySection, accountEditSection)
   );
 
-  // --- ===== INICIO DE LA CORRECCIÓN: LÓGICA DE GUARDADO DE PERFIL ===== ---
   profileEditSection.addEventListener("submit", async (e) => {
     e.preventDefault();
     const updatedData = {
-      name: document.getElementById("edit-name").value,
-      lastname: document.getElementById("edit-lastname").value,
       username: document.getElementById("edit-username").value,
       bio: document.getElementById("edit-bio").value,
     };
@@ -139,7 +130,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       alert(`Error al guardar: ${error.message}`);
     }
   });
-  // --- ===== FIN DE LA CORRECCIÓN ===== ---
 
   accountEditSection.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -175,6 +165,39 @@ document.addEventListener("DOMContentLoaded", async () => {
       alert(`Error: ${error.message}`);
     }
   });
+  deleteAccountBtn.addEventListener("click", async () => {
+    const confirmation = prompt(
+      "Esta acción es irreversible. Para confirmar, por favor, ingresa tu contraseña:"
+    );
 
+    if (confirmation === null) {
+      // El usuario canceló la operación
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("/api/account", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ password: confirmation }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message);
+      }
+
+      alert(result.message);
+      // Limpiar sesión y redirigir al login
+      localStorage.removeItem("token");
+      window.location.replace("/index.html");
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  });
   initializePage();
 });

@@ -5,7 +5,8 @@ import {
   profile,
   register,
   updateProfile,
-  updateAccountCredentials, // <-- Asegúrate de importar esto
+  updateAccountCredentials,
+  deleteAccount,
 } from "../controllers/auth.controllers.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
@@ -16,9 +17,10 @@ router.post("/register", register);
 
 router.get("/profile", authMiddleware, profile);
 router.patch("/profile", authMiddleware, updateProfile);
-
-// --- RUTA NUEVA PARA ACTUALIZAR CREDENCIALES ---
 router.patch("/account/credentials", authMiddleware, updateAccountCredentials);
+
+// --- RUTA NUEVA PARA ELIMINAR LA CUENTA ---
+router.delete("/account", authMiddleware, deleteAccount);
 
 router.post("/logout", logout);
 

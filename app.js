@@ -1,5 +1,3 @@
-// app.js
-
 import express from "express";
 import "dotenv/config";
 import cors from "cors";
@@ -18,7 +16,6 @@ import reporteRoutes from "./src/routes/reporteRoutes.js";
 import categoriaRoutes from "./src/routes/categoriaRoutes.js";
 import incidenteRoutes from "./src/routes/incidenteRoutes.js";
 import userRoutes from "./src/routes/user.routes.js";
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
