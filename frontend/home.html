@@ -32,6 +32,21 @@
       .subcategory-panel {
         transition: all 0.3s ease-in-out;
       }
+      /* Estilos para la barra de scroll personalizada */
+      .subcategory-panel::-webkit-scrollbar {
+        width: 6px;
+      }
+      .subcategory-panel::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      .subcategory-panel::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 10px;
+      }
+      .subcategory-panel::-webkit-scrollbar-thumb:hover {
+        background: #aaa;
+      }
     </style>
   </head>
 
@@ -209,51 +224,58 @@
             >
               Categorías
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start"
+            >
               <div
                 class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
               >
-                <div class="flex-grow">
-                  <div class="flex justify-between items-start">
-                    <div class="bg-red-100 p-2 rounded-lg">
-                      <i class="ph ph-shield-warning text-2xl text-red-600"></i>
-                    </div>
-                    <span
-                      class="text-sm font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md"
-                      >156</span
-                    >
+                <div class="flex justify-between items-start">
+                  <div class="bg-red-100 p-2 rounded-lg">
+                    <i class="ph ph-shield-warning text-2xl text-red-600"></i>
                   </div>
-                  <h3
-                    class="font-bold text-lg mt-4"
-                    style="color: var(--color-text-dark)"
+                  <span
+                    class="text-sm font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md"
+                    >156</span
                   >
-                    Delito / Robo
-                  </h3>
-                  <p class="text-sm text-gray-500 mt-1">
-                    Reportar robos, hurtos y vandalismo.
-                  </p>
                 </div>
+                <h3
+                  class="font-bold text-lg mt-4"
+                  style="color: var(--color-text-dark)"
+                >
+                  Delito / Robo
+                </h3>
+                <p class="text-sm text-gray-500 mt-1 mb-4">
+                  Reportar robos, hurtos y vandalismo.
+                </p>
+                <button
+                  id="toggle-button-1"
+                  class="w-full flex justify-between items-center text-left bg-gray-50 p-3 rounded-lg hover:bg-gray-100"
+                >
+                  <span class="font-semibold text-sm">Ver Subcategorías</span
+                  ><i class="ph ph-caret-down transition-transform"></i>
+                </button>
                 <div
                   id="subcategory-panel-1"
-                  class="hidden subcategory-panel mt-4 pt-4 border-t space-y-3"
+                  class="hidden subcategory-panel mt-4 space-y-3 max-h-48 overflow-y-auto pr-2"
                 >
-                  <div class="bg-gray-50 p-3 rounded-lg">
+                  <div class="bg-gray-100 p-3 rounded-lg">
                     <h4 class="font-semibold text-sm">Robo con Violencia</h4>
                     <p class="text-xs text-gray-500">Atraco, a mano armada</p>
                   </div>
-                  <div class="bg-gray-50 p-3 rounded-lg">
+                  <div class="bg-gray-100 p-3 rounded-lg">
                     <h4 class="font-semibold text-sm">Hurto</h4>
                     <p class="text-xs text-gray-500">
                       Robo sin violencia, de vehículo/pertenencias estacionadas
                     </p>
                   </div>
-                  <div class="bg-gray-50 p-3 rounded-lg">
+                  <div class="bg-gray-100 p-3 rounded-lg">
                     <h4 class="font-semibold text-sm">Vandalismo y Daño</h4>
                     <p class="text-xs text-gray-500">
                       Rotura de propiedad pública/privada, Graffiti
                     </p>
                   </div>
-                  <div class="bg-gray-50 p-3 rounded-lg">
+                  <div class="bg-gray-100 p-3 rounded-lg">
                     <h4 class="font-semibold text-sm">
                       Venta / Tráfico Ilegal
                     </h4>
@@ -262,57 +284,55 @@
                     </p>
                   </div>
                 </div>
-                <button
-                  id="toggle-button-1"
-                  class="w-full flex justify-between items-center text-left mt-6 bg-gray-50 p-3 rounded-lg hover:bg-gray-100"
-                >
-                  <span class="font-semibold text-sm">Ver Subcategorías</span
-                  ><i class="ph ph-caret-down transition-transform"></i>
-                </button>
               </div>
 
               <div
                 class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
               >
-                <div class="flex-grow">
-                  <div class="flex justify-between items-start">
-                    <div class="bg-purple-100 p-2 rounded-lg">
-                      <i
-                        class="ph ph-warning-octagon text-2xl text-purple-600"
-                      ></i>
-                    </div>
-                    <span
-                      class="text-sm font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md"
-                      >89</span
-                    >
+                <div class="flex justify-between items-start">
+                  <div class="bg-purple-100 p-2 rounded-lg">
+                    <i
+                      class="ph ph-warning-octagon text-2xl text-purple-600"
+                    ></i>
                   </div>
-                  <h3
-                    class="font-bold text-lg mt-4"
-                    style="color: var(--color-text-dark)"
+                  <span
+                    class="text-sm font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md"
+                    >89</span
                   >
-                    Violencia / Acoso
-                  </h3>
-                  <p class="text-sm text-gray-500 mt-1">
-                    Reportar situaciones de violencia y acoso.
-                  </p>
                 </div>
+                <h3
+                  class="font-bold text-lg mt-4"
+                  style="color: var(--color-text-dark)"
+                >
+                  Violencia / Acoso
+                </h3>
+                <p class="text-sm text-gray-500 mt-1 mb-4">
+                  Reportar situaciones de violencia y acoso.
+                </p>
+                <button
+                  id="toggle-button-2"
+                  class="w-full flex justify-between items-center text-left bg-gray-50 p-3 rounded-lg hover:bg-gray-100"
+                >
+                  <span class="font-semibold text-sm">Ver Subcategorías</span
+                  ><i class="ph ph-caret-down transition-transform"></i>
+                </button>
                 <div
                   id="subcategory-panel-2"
-                  class="hidden subcategory-panel mt-4 pt-4 border-t space-y-3"
+                  class="hidden subcategory-panel mt-4 space-y-3 max-h-48 overflow-y-auto pr-2"
                 >
-                  <div class="bg-gray-50 p-3 rounded-lg">
+                  <div class="bg-gray-100 p-3 rounded-lg">
                     <h4 class="font-semibold text-sm">Acoso / Hostigamiento</h4>
                     <p class="text-xs text-gray-500">
                       Verbal, Seguimiento, Conducta sospechosa
                     </p>
                   </div>
-                  <div class="bg-gray-50 p-3 rounded-lg">
+                  <div class="bg-gray-100 p-3 rounded-lg">
                     <h4 class="font-semibold text-sm">Pelea o Agresión</h4>
                     <p class="text-xs text-gray-500">
                       Disturbios en la vía pública, Conflicto vecinal escalado
                     </p>
                   </div>
-                  <div class="bg-gray-50 p-3 rounded-lg">
+                  <div class="bg-gray-100 p-3 rounded-lg">
                     <h4 class="font-semibold text-sm">
                       Situación de Violencia de Género
                     </h4>
@@ -321,55 +341,53 @@
                     </p>
                   </div>
                 </div>
-                <button
-                  id="toggle-button-2"
-                  class="w-full flex justify-between items-center text-left mt-6 bg-gray-50 p-3 rounded-lg hover:bg-gray-100"
-                >
-                  <span class="font-semibold text-sm">Ver Subcategorías</span
-                  ><i class="ph ph-caret-down transition-transform"></i>
-                </button>
               </div>
 
               <div
                 class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
               >
-                <div class="flex-grow">
-                  <div class="flex justify-between items-start">
-                    <div class="bg-orange-100 p-2 rounded-lg">
-                      <i class="ph ph-car text-2xl text-orange-600"></i>
-                    </div>
-                    <span
-                      class="text-sm font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md"
-                      >124</span
-                    >
+                <div class="flex justify-between items-start">
+                  <div class="bg-orange-100 p-2 rounded-lg">
+                    <i class="ph ph-car text-2xl text-orange-600"></i>
                   </div>
-                  <h3
-                    class="font-bold text-lg mt-4"
-                    style="color: var(--color-text-dark)"
+                  <span
+                    class="text-sm font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md"
+                    >124</span
                   >
-                    Tránsito / Vía Pública
-                  </h3>
-                  <p class="text-sm text-gray-500 mt-1">
-                    Reportar problemas de tránsito y vía pública.
-                  </p>
                 </div>
+                <h3
+                  class="font-bold text-lg mt-4"
+                  style="color: var(--color-text-dark)"
+                >
+                  Tránsito / Vía Pública
+                </h3>
+                <p class="text-sm text-gray-500 mt-1 mb-4">
+                  Reportar problemas de tránsito y vía pública.
+                </p>
+                <button
+                  id="toggle-button-3"
+                  class="w-full flex justify-between items-center text-left bg-gray-50 p-3 rounded-lg hover:bg-gray-100"
+                >
+                  <span class="font-semibold text-sm">Ver Subcategorías</span
+                  ><i class="ph ph-caret-down transition-transform"></i>
+                </button>
                 <div
                   id="subcategory-panel-3"
-                  class="hidden subcategory-panel mt-4 pt-4 border-t space-y-3"
+                  class="hidden subcategory-panel mt-4 space-y-3 max-h-48 overflow-y-auto pr-2"
                 >
-                  <div class="bg-gray-50 p-3 rounded-lg">
+                  <div class="bg-gray-100 p-3 rounded-lg">
                     <h4 class="font-semibold text-sm">Accidente Vial</h4>
                     <p class="text-xs text-gray-500">
                       Colisión, Choque con lesiones
                     </p>
                   </div>
-                  <div class="bg-gray-50 p-3 rounded-lg">
+                  <div class="bg-gray-100 p-3 rounded-lg">
                     <h4 class="font-semibold text-sm">Conducción Peligrosa</h4>
                     <p class="text-xs text-gray-500">
                       Picadas, Exceso de velocidad, Maniobras imprudentes
                     </p>
                   </div>
-                  <div class="bg-gray-50 p-3 rounded-lg">
+                  <div class="bg-gray-100 p-3 rounded-lg">
                     <h4 class="font-semibold text-sm">
                       Obstrucción / Peligro Vial
                     </h4>
@@ -379,49 +397,47 @@
                     </p>
                   </div>
                 </div>
-                <button
-                  id="toggle-button-3"
-                  class="w-full flex justify-between items-center text-left mt-6 bg-gray-50 p-3 rounded-lg hover:bg-gray-100"
-                >
-                  <span class="font-semibold text-sm">Ver Subcategorías</span
-                  ><i class="ph ph-caret-down transition-transform"></i>
-                </button>
               </div>
 
               <div
                 class="bg-white p-6 rounded-2xl border border-gray-200 flex flex-col"
               >
-                <div class="flex-grow">
-                  <div class="flex justify-between items-start">
-                    <div class="bg-yellow-100 p-2 rounded-lg">
-                      <i class="ph ph-warning text-2xl text-yellow-600"></i>
-                    </div>
-                    <span
-                      class="text-sm font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md"
-                      >203</span
-                    >
+                <div class="flex justify-between items-start">
+                  <div class="bg-yellow-100 p-2 rounded-lg">
+                    <i class="ph ph-warning text-2xl text-yellow-600"></i>
                   </div>
-                  <h3
-                    class="font-bold text-lg mt-4"
-                    style="color: var(--color-text-dark)"
+                  <span
+                    class="text-sm font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md"
+                    >203</span
                   >
-                    Infraestructura de Riesgo
-                  </h3>
-                  <p class="text-sm text-gray-500 mt-1">
-                    Reportar problemas de infraestructura urbana.
-                  </p>
                 </div>
+                <h3
+                  class="font-bold text-lg mt-4"
+                  style="color: var(--color-text-dark)"
+                >
+                  Infraestructura de Riesgo
+                </h3>
+                <p class="text-sm text-gray-500 mt-1 mb-4">
+                  Reportar problemas de infraestructura urbana.
+                </p>
+                <button
+                  id="toggle-button-4"
+                  class="w-full flex justify-between items-center text-left bg-gray-50 p-3 rounded-lg hover:bg-gray-100"
+                >
+                  <span class="font-semibold text-sm">Ver Subcategorías</span
+                  ><i class="ph ph-caret-down transition-transform"></i>
+                </button>
                 <div
                   id="subcategory-panel-4"
-                  class="hidden subcategory-panel mt-4 pt-4 border-t space-y-3"
+                  class="hidden subcategory-panel mt-4 space-y-3 max-h-48 overflow-y-auto pr-2"
                 >
-                  <div class="bg-gray-50 p-3 rounded-lg">
+                  <div class="bg-gray-100 p-3 rounded-lg">
                     <h4 class="font-semibold text-sm">Mala Iluminación</h4>
                     <p class="text-xs text-gray-500">
                       Foco roto, Calles oscuras
                     </p>
                   </div>
-                  <div class="bg-gray-50 p-3 rounded-lg">
+                  <div class="bg-gray-100 p-3 rounded-lg">
                     <h4 class="font-semibold text-sm">
                       Vía Pública en Mal Estado
                     </h4>
@@ -429,20 +445,13 @@
                       Baches peligrosos, Zanjas abiertas, Acera destrozada
                     </p>
                   </div>
-                  <div class="bg-gray-50 p-3 rounded-lg">
+                  <div class="bg-gray-100 p-3 rounded-lg">
                     <h4 class="font-semibold text-sm">Abandono Urbano</h4>
                     <p class="text-xs text-gray-500">
                       Lotes baldíos sin cercar, Basurales a cielo abierto
                     </p>
                   </div>
                 </div>
-                <button
-                  id="toggle-button-4"
-                  class="w-full flex justify-between items-center text-left mt-6 bg-gray-50 p-3 rounded-lg hover:bg-gray-100"
-                >
-                  <span class="font-semibold text-sm">Ver Subcategorías</span
-                  ><i class="ph ph-caret-down transition-transform"></i>
-                </button>
               </div>
             </div>
           </section>
